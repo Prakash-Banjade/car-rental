@@ -9,7 +9,7 @@ import { UsersModule } from './users/users.module';
 import { MemoryStoredFile, NestjsFormDataModule } from 'nestjs-form-data';
 import { AuthModule } from './auth/auth.module';
 import { CaslModule } from './casl/casl.module';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR, RouterModule } from '@nestjs/core';
 import { AuthGuard } from './auth/guards/auth.guard';
 import { AbilitiesGuard } from './casl/guards/abilities.guard';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
@@ -21,6 +21,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AccountsModule } from './accounts/accounts.module';
 import { AddressesModule } from './addresses/addresses.module';
+import { ImagesModule } from './images/images.module';
 
 @Module({
   imports: [
@@ -60,18 +61,25 @@ import { AddressesModule } from './addresses/addresses.module';
     MailModule,
     AccountsModule,
     AddressesModule,
+    ImagesModule,
+    RouterModule.register([
+      {
+        path: 'upload',
+        module: ImagesModule,
+      },
+    ]),
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard, // global auth guard
-    },
-    {
-      provide: APP_GUARD,
-      useClass: AbilitiesGuard, // global ability guard
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthGuard, // global auth guard
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AbilitiesGuard, // global ability guard
+    // },
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard, // global rate limiting, but can be overriden in route level

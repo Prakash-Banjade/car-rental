@@ -29,6 +29,7 @@ async function bootstrap() {
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
   app.use(cookieParser());
+  app.setGlobalPrefix('api')
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }))
 

@@ -7,7 +7,7 @@ import { PageOptionsDto } from 'src/core/dto/pageOptions.dto';
 import paginatedData from 'src/core/utils/paginatedData';
 import { UsersQueryDto } from './dto/user-query.dto';
 import { Deleted } from 'src/core/dto/query.dto';
-import getFileName from 'src/core/utils/getImageURL';
+import getFileName from 'src/core/utils/getFileName';
 import { Account } from 'src/accounts/entities/account.entity';
 import { AuthUser } from 'src/core/types/global.types';
 

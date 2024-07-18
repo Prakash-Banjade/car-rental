@@ -1,9 +1,10 @@
 import { BaseEntity } from "src/core/entities/base.entity";
-import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, OneToOne } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
 import * as bcrypt from 'bcrypt';
 import { Roles } from "src/core/types/global.types";
 import { BadRequestException } from "@nestjs/common";
 import { User } from "src/users/entities/user.entity";
+import { Image } from "src/images/entities/image.entity";
 
 @Entity()
 export class Account extends BaseEntity {
@@ -32,6 +33,9 @@ export class Account extends BaseEntity {
     @JoinColumn()
     user: User
 
+    @OneToMany(() => Image, image => image.uploadedBy)
+    images: Image[]
+    
     @BeforeInsert()
     hashPassword() {
         if (!this.password) throw new BadRequestException('Password required');
