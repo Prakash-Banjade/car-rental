@@ -6,6 +6,7 @@ export enum Roles {
 
 export interface AuthUser {
     userId: string;
+    accountId: string;
     name: string;
     email: string;
     role: Roles;
@@ -17,4 +18,10 @@ export enum Action {
     READ = 'read',
     UPDATE = 'update',
     DELETE = 'delete',
+}
+
+export enum Gender {
+    MALE = 'male',
+    FEMALE = 'female',
+    OTHER = 'other',
 }

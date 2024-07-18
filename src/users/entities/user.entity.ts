@@ -1,43 +1,26 @@
 import { BaseEntity } from "src/core/entities/base.entity";
-import { BeforeInsert, BeforeUpdate, Column, Entity } from "typeorm";
-import * as bcrypt from 'bcrypt';
-import { Roles } from "src/core/types/global.types";
+import { Column, Entity, OneToOne } from "typeorm";
+import { Gender } from "src/core/types/global.types";
+import { Account } from "src/accounts/entities/account.entity";
+import { Address } from "src/addresses/entities/address.entity";
 
 @Entity()
 export class User extends BaseEntity {
-    @Column({ type: 'varchar' })
-    name: string;
+    @Column({ type: 'varchar', nullable: true })
+    phone?: string;
 
-    @Column({ type: 'varchar' })
-    email: string;
+    @Column({ type: 'enum', enum: Gender, nullable: true })
+    gender?: Gender
 
-    @Column({ type: 'varchar' })
-    password: string;
-
-    @Column({ type: 'enum', enum: Roles, default: Roles.USER })
-    role: Roles;
+    @Column({ type: 'datetime', nullable: true })
+    dob?: string;
 
     @Column({ type: 'varchar', nullable: true })
-    image: string;
+    image?: string;
 
-    @Column({ type: 'varchar', nullable: true })
-    refresh_token: string;
+    @OneToOne(() => Address, address => address.user, { nullable: true })
+    address?: Address
 
-    @BeforeInsert()
-    hashPassword() {
-        if (!this.password) throw new Error('Password required');
-
-        this.password = bcrypt.hashSync(this.password, 10);
-    }
-
-    @BeforeInsert()
-    @BeforeUpdate()
-    validateEmail() {
-        if (!this.email) throw new Error('Email required');
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (!emailRegex.test(this.email)) throw new Error('Invalid email');
-    }
-
+    @OneToOne(() => Account, account => account.user, { nullable: true })
+    account: Account
 }

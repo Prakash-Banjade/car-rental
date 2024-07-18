@@ -4,15 +4,19 @@ import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { CaslModule } from 'src/casl/casl.module';
+import { UsersRepository } from './repository/users.repository';
+import { Account } from 'src/accounts/entities/account.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      User
+      User,
+      Account
     ]),
     CaslModule,
   ],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService, UsersRepository],
+  exports: [UsersService, UsersRepository],
 })
 export class UsersModule { }

@@ -19,6 +19,8 @@ import { MailModule } from './mail/mail.module';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { AccountsModule } from './accounts/accounts.module';
+import { AddressesModule } from './addresses/addresses.module';
 
 @Module({
   imports: [
@@ -56,6 +58,8 @@ import { join } from 'path';
     AuthModule,
     CaslModule,
     MailModule,
+    AccountsModule,
+    AddressesModule,
   ],
   controllers: [AppController],
   providers: [

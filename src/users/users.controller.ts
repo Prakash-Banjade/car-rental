@@ -5,11 +5,13 @@ import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FormDataRequest, MemoryStoredFile } from 'nestjs-form-data';
 import { CaslAbilityFactory } from 'src/casl/casl-ability.factory/casl-ability.factory';
 import { ChekcAbilities } from 'src/core/decorators/abilities.decorator';
-import { Action } from 'src/core/types/global.types';
+import { Action, AuthUser } from 'src/core/types/global.types';
 import { User } from './entities/user.entity';
 import { ApiPaginatedResponse } from 'src/core/decorators/apiPaginatedResponse.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PageOptionsDto } from 'src/core/dto/pageOptions.dto';
+import { UsersQueryDto } from './dto/user-query.dto';
+import { CurrentUser } from 'src/core/decorators/user.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Users')
@@ -24,8 +26,8 @@ export class UsersController {
 
   @Get()
   @ApiPaginatedResponse(CreateUserDto)
-  findAll(@Query() pageOptionsDto: PageOptionsDto) {
-    return this.usersService.findAll(pageOptionsDto);
+  findAll(@Query() queryDto: UsersQueryDto) {
+    return this.usersService.findAll(queryDto);
   }
 
   @Get(':id')
@@ -36,8 +38,8 @@ export class UsersController {
   @FormDataRequest({ storage: MemoryStoredFile })
   @Patch(':id')
   @ApiConsumes('multipart/form-data')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  update(@Body() updateUserDto: UpdateUserDto, @CurrentUser() currentUser: AuthUser) {
+    return this.usersService.update(updateUserDto, currentUser);
   }
 
   @Delete(':id')
