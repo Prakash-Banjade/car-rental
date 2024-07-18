@@ -5,8 +5,8 @@ import { UsersModule } from "src/users/users.module";
 
 export function setupSwagger(app: INestApplication): void {
     const config = new DocumentBuilder()
-        .setTitle('My API Title')
-        .setDescription('Backend API documentation for NestJs application')
+        .setTitle('Car Rental')
+        .setDescription('Backend API documentation for Car rental application')
         .setVersion('1.0')
         .addBearerAuth(
             {
@@ -25,7 +25,7 @@ export function setupSwagger(app: INestApplication): void {
     });
 
     SwaggerModule.setup('api', app, document, {
-        customSiteTitle: 'My API Title',
+        customSiteTitle: 'Car Rental',
         // customfavIcon: 'https://avatars.githubusercontent.com/u/6936373?s=200&v=4',
         // customJs: [
         //     'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js',

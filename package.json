@@ -1,7 +1,7 @@
 {
-  "name": "nestjs_starter_authentication_authorization",
+  "name": "car-rental",
   "version": "0.0.1",
-  "description": "A NestJs starter template with full fledged authentication and authorization features and many more.",
+  "description": "",
   "author": "Prakash Banjade",
   "contributors": [
     "Prakash Banjade (https://github.com/prakash-banjade)"
@@ -35,13 +35,14 @@
   },
   "dependencies": {
     "@casl/ability": "^6.7.1",
-    "@nestjs-modules/mailer": "^2.0.2",
+    "@nestjs-modules/mailer": "^1.6.1",
     "@nestjs/cache-manager": "^2.2.2",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.2",
     "@nestjs/core": "^10.0.0",
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/serve-static": "^4.0.2",
     "@nestjs/swagger": "^7.3.1",
     "@nestjs/throttler": "^5.1.2",
     "@nestjs/typeorm": "^10.0.2",
