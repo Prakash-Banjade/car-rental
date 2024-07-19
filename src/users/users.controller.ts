@@ -3,13 +3,10 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FormDataRequest, MemoryStoredFile } from 'nestjs-form-data';
-import { CaslAbilityFactory } from 'src/casl/casl-ability.factory/casl-ability.factory';
 import { ChekcAbilities } from 'src/core/decorators/abilities.decorator';
 import { Action, AuthUser } from 'src/core/types/global.types';
-import { User } from './entities/user.entity';
 import { ApiPaginatedResponse } from 'src/core/decorators/apiPaginatedResponse.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
-import { PageOptionsDto } from 'src/core/dto/pageOptions.dto';
 import { UsersQueryDto } from './dto/user-query.dto';
 import { CurrentUser } from 'src/core/decorators/user.decorator';
 
@@ -19,13 +16,13 @@ import { CurrentUser } from 'src/core/decorators/user.decorator';
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
-    private readonly abilityFactory: CaslAbilityFactory
   ) { }
 
   // Users are created from auth/register
 
   @Get()
   @ApiPaginatedResponse(CreateUserDto)
+  @ChekcAbilities({ action: Action.READ, subject: 'all' })
   findAll(@Query() queryDto: UsersQueryDto) {
     return this.usersService.findAll(queryDto);
   }
@@ -36,7 +33,7 @@ export class UsersController {
   }
 
   @FormDataRequest({ storage: MemoryStoredFile })
-  @Patch(':id')
+  @Patch()
   @ApiConsumes('multipart/form-data')
   update(@Body() updateUserDto: UpdateUserDto, @CurrentUser() currentUser: AuthUser) {
     return this.usersService.update(updateUserDto, currentUser);

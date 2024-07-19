@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ImagesService } from './images.service';
 import { ImagesController } from './images.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,6 +8,7 @@ import { ImageGallery } from './entities/image-gallery.entity';
 import { ImageGalleriesController } from './image-galleries.controller';
 import { ImageGalleriesService } from './image-galleries.service';
 
+Global()
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -18,5 +19,6 @@ import { ImageGalleriesService } from './image-galleries.service';
   ],
   controllers: [ImagesController, ImageGalleriesController],
   providers: [ImagesService, ImageGalleriesService],
+  exports: [ImagesService, ImageGalleriesService],
 })
 export class ImagesModule { }
