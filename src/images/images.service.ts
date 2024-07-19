@@ -29,7 +29,11 @@ export class ImagesService {
     const savedImage = await this.imagesRepository.save(image);
 
     return {
-      url: savedImage.url
+      message: 'Image Uploaded',
+      image: {
+        url: savedImage.url,
+        id: savedImage.id
+      }
     }
   }
 
@@ -49,11 +53,14 @@ export class ImagesService {
       })
     })
 
-    await querybuilder.insert().values(insertValues).execute();
+    const data = await querybuilder.insert().values(insertValues).execute();
 
     return {
       message: 'Gallery Created',
-      urls: insertValues.map(image => image.url)
+      gallery: insertValues.map((image, ind) => ({
+        url: image.url,
+        id: data.generatedMaps[ind].id
+      }))
     }
 
   }
@@ -87,7 +94,11 @@ export class ImagesService {
     const savedImage = await this.imagesRepository.save(existing);
 
     return {
-      url: savedImage.url
+      message: 'Image updated',
+      image: {
+        url: savedImage.url,
+        id: savedImage.id
+      }
     }
   }
 
