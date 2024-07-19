@@ -33,7 +33,7 @@ import { ImagesModule } from './images/images.module';
       storage: MemoryStoredFile,
       isGlobal: true,
       fileSystemStoragePath: 'public',
-      autoDeleteFile: true,
+      autoDeleteFile: false,
       cleanupAfterSuccessHandle: false, // !important
     }),
     ServeStaticModule.forRoot({
@@ -72,14 +72,14 @@ import { ImagesModule } from './images/images.module';
   controllers: [AppController],
   providers: [
     AppService,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthGuard, // global auth guard
-    // },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AbilitiesGuard, // global ability guard
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard, // global auth guard
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AbilitiesGuard, // global ability guard
+    },
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard, // global rate limiting, but can be overriden in route level

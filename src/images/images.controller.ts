@@ -5,6 +5,7 @@ import { UpdateImageDto } from './dto/update-image.dto';
 import { AuthUser } from 'src/core/types/global.types';
 import { ApiTags } from '@nestjs/swagger';
 import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
+import { CurrentUser } from 'src/core/decorators/user.decorator';
 
 @ApiTags('Upload Images')
 @Controller('images') // route-path: /upload/images
@@ -13,7 +14,7 @@ export class ImagesController {
 
   @Post()
   @FormDataRequest({ storage: FileSystemStoredFile, limits: { files: 1 } })
-  upload(@Body() createImageDto: CreateImageDto, currentUser: AuthUser) {
+  upload(@Body() createImageDto: CreateImageDto, @CurrentUser() currentUser: AuthUser) {
     return this.imagesService.upload(createImageDto, currentUser);
   }
 
@@ -29,12 +30,12 @@ export class ImagesController {
 
   @Patch(':id')
   @FormDataRequest({ storage: FileSystemStoredFile, limits: { files: 1 } })
-  update(@Param('id') id: string, @Body() updateImageDto: UpdateImageDto, currentUser: AuthUser) {
+  update(@Param('id') id: string, @Body() updateImageDto: UpdateImageDto, @CurrentUser() currentUser: AuthUser) {
     return this.imagesService.update(id, updateImageDto, currentUser);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.imagesService.remove(id);
+  remove(@Param('id') id: string, @CurrentUser() currentUser: AuthUser) {
+    return this.imagesService.remove(id, currentUser);
   }
 }
