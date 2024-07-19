@@ -3,13 +3,12 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Brackets, IsNull, Not, Or, Repository } from 'typeorm';
-import { PageOptionsDto } from 'src/core/dto/pageOptions.dto';
 import paginatedData from 'src/core/utils/paginatedData';
 import { UsersQueryDto } from './dto/user-query.dto';
 import { Deleted } from 'src/core/dto/query.dto';
-import getFileName from 'src/core/utils/getFileName';
 import { Account } from 'src/accounts/entities/account.entity';
 import { AuthUser } from 'src/core/types/global.types';
+import { ImagesService } from 'src/images/images.service';
 
 @Injectable()
 export class UsersService {
@@ -17,6 +16,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(Account) private accountRepo: Repository<Account>,
+    private readonly imagesService: ImagesService,
   ) { }
 
   async findAll(queryDto: UsersQueryDto) {
@@ -30,14 +30,14 @@ export class UsersService {
       .withDeleted()
       .where({ deletedAt })
       .leftJoin("user.account", "account")
+      .leftJoin("user.profileImage", "profileImage")
       .leftJoin("user.address", "address")
-      .leftJoin("user.shippingAddresses", "shippingAddresses")
       .andWhere(new Brackets(qb => {
         queryDto.role && qb.andWhere('account.role = :role', { role: queryDto.role });
       }))
       .select([
         'account.firstName', 'account.lastName', 'account.email', 'account.role', 'account.isVerified',
-        'user.id', 'user.phone', 'user.gender', 'user.dob', 'user.image', 'user.createdAt',
+        'user.id', 'user.phone', 'user.gender', 'user.dob', 'profileImage.id', 'profileImage.url', 'user.createdAt',
         'address.address1', 'address.address2',
       ])
 
@@ -75,23 +75,21 @@ export class UsersService {
     const existingAccount = await this.accountRepo.findOneBy({ id: currentUser.accountId });
     if (!existingAccount) throw new InternalServerErrorException('Unable to update the associated profile. Please contact support.');
 
+    const profileImage = updateUserDto.profileImageId ? await this.imagesService.findOne(updateUserDto.profileImageId) : null;
+
     // update user
     Object.assign(existingUser, {
       ...updateUserDto,
     });
 
-    await this.usersRepository.save(existingUser);
+    // assign profile image
+    existingUser.profileImage = profileImage;
 
-    // update account
-    if (updateUserDto.email) {
-      const existingAccountWithSameEmail = await this.accountRepo.findOneBy({ email: updateUserDto.email });
-      if (existingAccountWithSameEmail && existingAccountWithSameEmail.id !== currentUser.accountId) throw new BadRequestException('Email already in use');
-    }
+    await this.usersRepository.save(existingUser);
 
     Object.assign(existingAccount, {
       firstName: updateUserDto.firstName || existingAccount.firstName,
       lastName: updateUserDto.lastName,
-      email: updateUserDto.email || existingAccount.email,
     })
 
     await this.accountRepo.save(existingAccount);

@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, Length } from 'class-validator';
+import { IsDateString, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsUUID, Length } from 'class-validator';
 import { Gender } from 'src/core/types/global.types';
 
 export class UpdateUserDto {
@@ -12,15 +12,8 @@ export class UpdateUserDto {
 
     @ApiPropertyOptional({ type: 'string', description: 'Last name of the user' })
     @IsString()
-    @Length(2)
     @IsOptional()
     lastName?: string = '';
-
-    @ApiPropertyOptional({ type: 'string', format: 'email', description: 'Valid email' })
-    @IsEmail()
-    @IsNotEmpty()
-    @IsOptional()
-    email?: string;
 
     @ApiPropertyOptional({ type: 'string', description: 'A valid UAE based phone number' })
     @IsPhoneNumber('AE')
@@ -39,6 +32,6 @@ export class UpdateUserDto {
 
     @ApiPropertyOptional({ type: 'string', description: 'Profile image url' })
     @IsOptional()
-    @IsString()
-    imageUrl?: string;
+    @IsUUID()
+    profileImageId?: string;
 }
