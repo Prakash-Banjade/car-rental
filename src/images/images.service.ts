@@ -85,6 +85,20 @@ export class ImagesService {
 
   async update(id: string, updateImageDto: UpdateImageDto, currentUser: AuthUser) {
     const existing = await this.findOne(id, currentUser?.role !== 'admin' ? currentUser : undefined);
+
+    if (!updateImageDto.image) { // only name is provided
+      existing.name = updateImageDto.name;
+      const savedImage = await this.imagesRepository.save(existing);
+      return {
+        message: 'Image updated',
+        image: {
+          url: savedImage.url,
+          id: savedImage.id
+        }
+      }
+    }
+
+    // image is provided
     const metaData = getImageMetadata(updateImageDto.image);
 
     existing.url = metaData.url;

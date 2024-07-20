@@ -53,6 +53,7 @@ export class UsersService {
       where: { id },
       relations: {
         account: true,
+        profileImage: true,
       },
       select: {
         account: {
@@ -62,6 +63,10 @@ export class UsersService {
           lastName: true,
           role: true,
           isVerified: true,
+        },
+        profileImage: {
+          url: true,
+          id: true,
         }
       }
     });
@@ -75,7 +80,9 @@ export class UsersService {
     const existingAccount = await this.accountRepo.findOneBy({ id: currentUser.accountId });
     if (!existingAccount) throw new InternalServerErrorException('Unable to update the associated profile. Please contact support.');
 
-    const profileImage = updateUserDto.profileImageId ? await this.imagesService.findOne(updateUserDto.profileImageId) : null;
+    const profileImage = (updateUserDto.profileImageId && existingUser.profileImage.id !== updateUserDto.profileImageId)
+      ? await this.imagesService.findOne(updateUserDto.profileImageId)
+      : null;
 
     // update user
     Object.assign(existingUser, {

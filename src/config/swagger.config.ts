@@ -1,6 +1,8 @@
 import { INestApplication } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AuthModule } from "src/auth/auth.module";
+import { BrandsModule } from "src/brands/brands.module";
+import { CarTypesModule } from "src/car-types/car-types.module";
 import { UsersModule } from "src/users/users.module";
 
 export function setupSwagger(app: INestApplication): void {
@@ -21,10 +23,15 @@ export function setupSwagger(app: INestApplication): void {
         .build();
 
     const document = SwaggerModule.createDocument(app, config, {
-        include: [AuthModule, UsersModule],
+        include: [
+            AuthModule,
+            UsersModule,
+            CarTypesModule,
+            BrandsModule,
+        ],
     });
 
-    SwaggerModule.setup('api', app, document, {
+    SwaggerModule.setup('docs', app, document, {
         customSiteTitle: 'Car Rental',
         // customfavIcon: 'https://avatars.githubusercontent.com/u/6936373?s=200&v=4',
         // customJs: [

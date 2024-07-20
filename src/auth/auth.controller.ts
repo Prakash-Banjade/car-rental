@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { SignInDto } from './dto/signIn.dto';
 import { CookieOptions, Request, Response } from 'express';
 import { RegisterDto } from './dto/register.dto';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/core/decorators/setPublicRoute.decorator';
 import { TransactionInterceptor } from 'src/core/interceptors/transaction.interceptor';
 import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
@@ -97,7 +97,7 @@ export class AuthController {
         return await this.authService.verifyEmail(emailVerificationDto);
     }
 
-    @Public()
+    @ApiBearerAuth()
     @Post('logout')
     @UseInterceptors(TransactionInterceptor)
     @UseGuards(RefreshTokenGuard)
@@ -116,6 +116,7 @@ export class AuthController {
         return;
     }
 
+    @ApiBearerAuth()
     @Post('changePassword')
     @HttpCode(HttpStatus.OK)
     @UseInterceptors(TransactionInterceptor)
