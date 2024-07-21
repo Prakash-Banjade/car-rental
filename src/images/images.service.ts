@@ -56,11 +56,14 @@ export class ImagesService {
     const data = await querybuilder.insert().values(insertValues).execute();
 
     return {
-      message: 'Gallery Created',
-      gallery: insertValues.map((image, ind) => ({
-        url: image.url,
-        id: data.generatedMaps[ind].id
-      }))
+      message: 'Gallery Updated',
+      gallery: {
+        id: imageGallery.id,
+        images: insertValues.map((image, ind) => ({
+          url: image.url,
+          id: data.generatedMaps[ind].id
+        }))
+      }
     }
 
   }
