@@ -16,8 +16,13 @@ export class BrandsService {
   ) { }
 
   async create(createBrandDto: CreateBrandDto) {
-    const existingBrand = await this.brandRepository.findOneBy({ name: createBrandDto.name });
-    if (existingBrand) throw new ConflictException('Brand already exists');
+    const existingBrand = await this.brandRepository.findOne({
+      where: [
+        { name: createBrandDto.name },
+        { slug: createBrandDto.slug }
+      ]
+    });
+    if (existingBrand) throw new ConflictException('Brand with that name or slug already exists');
 
     const logo = await this.imageService.findOne(createBrandDto.logoId);
 
@@ -30,14 +35,7 @@ export class BrandsService {
 
     const savedBrand = await this.brandRepository.save(brand);
 
-    return {
-      message: 'Brand created',
-      brand: {
-        id: savedBrand.id,
-        name: savedBrand.name,
-        slug: savedBrand.slug,
-      }
-    }
+    return this.brandMutationReturn(savedBrand, 'create');
   }
 
   async findAll(queryDto: QueryDto) {
@@ -61,9 +59,9 @@ export class BrandsService {
     return paginatedData(queryDto, queryBuilder);
   }
 
-  async findOne(id: string) {
+  async findOne(slug: string) {
     const existingBrand = await this.brandRepository.findOne({
-      where: { id },
+      where: { slug },
       relations: {
         logo: true,
       },
@@ -79,12 +77,24 @@ export class BrandsService {
     return existingBrand;
   }
 
-  async update(id: string, updateBrandDto: UpdateBrandDto) {
-    const existingBrand = await this.findOne(id);
+  async update(slug: string, updateBrandDto: UpdateBrandDto) {
+    const existingBrand = await this.findOne(slug);
 
+    // check if name or slug is already taken
+    if (existingBrand.name !== updateBrandDto.name || existingBrand.slug !== updateBrandDto.slug) {
+      const existingWithSameNameOrSlug = await this.brandRepository.findOne({
+        where: [
+          { name: updateBrandDto.name },
+          { slug: updateBrandDto.slug }
+        ]
+      });
+      if (existingWithSameNameOrSlug && existingWithSameNameOrSlug.id !== existingBrand.id) throw new ConflictException('Brand with that name or slug already exists');
+    }
+
+    // Update logo if it's different
     const logo = updateBrandDto.logoId && (existingBrand.logo.id !== updateBrandDto.logoId)
       ? await this.imageService.findOne(updateBrandDto.logoId)
-      : null;
+      : existingBrand.logo;
 
     Object.assign(existingBrand, {
       ...updateBrandDto,
@@ -93,21 +103,26 @@ export class BrandsService {
 
     const savedBrand = await this.brandRepository.save(existingBrand);
 
-    return {
-      message: 'Brand updated',
-      brand: {
-        id: savedBrand.id,
-        name: savedBrand.name,
-      }
-    }
+    return this.brandMutationReturn(savedBrand, 'update');
   }
 
-  async remove(id: string) {
-    const existingBrand = await this.findOne(id);
+  async remove(slug: string) {
+    const existingBrand = await this.findOne(slug);
     await this.brandRepository.remove(existingBrand);
 
     return {
       message: 'Brand removed',
+    }
+  }
+
+  private brandMutationReturn(brand: Brand, type: 'create' | 'update') {
+    return {
+      message: `${type === 'create' ? 'Brand created' : 'Brand updated'}`,
+      brand: {
+        id: brand.id,
+        name: brand.name,
+        slug: brand.slug,
+      }
     }
   }
 }

@@ -16,8 +16,13 @@ export class CarTypesService {
   ) { }
 
   async create(createCarTypeDto: CreateCarTypeDto) {
-    const existingCarType = await this.carTypeRepository.findOneBy({ name: createCarTypeDto.name });
-    if (existingCarType) throw new ConflictException('CarType already exists');
+    const existingCarType = await this.carTypeRepository.findOne({
+      where: [
+        { name: createCarTypeDto.name },
+        { slug: createCarTypeDto.slug }
+      ]
+    });
+    if (existingCarType) throw new ConflictException('Car type with that name or slug already exists');
 
     const image = await this.imageService.findOne(createCarTypeDto.imageId);
 
@@ -30,14 +35,7 @@ export class CarTypesService {
 
     const savedCarType = await this.carTypeRepository.save(carType);
 
-    return {
-      message: 'Car type created',
-      carType: {
-        id: savedCarType.id,
-        name: savedCarType.name,
-        slug: savedCarType.slug,
-      }
-    }
+    return this.carTypeMutationReturn(savedCarType, 'create');
   }
 
   async findAll(queryDto: QueryDto) {
@@ -61,9 +59,9 @@ export class CarTypesService {
     return paginatedData(queryDto, queryBuilder);
   }
 
-  async findOne(id: string) {
+  async findOne(slug: string) {
     const existingCarType = await this.carTypeRepository.findOne({
-      where: { id },
+      where: { slug },
       relations: {
         image: true,
       },
@@ -79,35 +77,52 @@ export class CarTypesService {
     return existingCarType;
   }
 
-  async update(id: string, updateCarTypeDto: UpdateCarTypeDto) {
-    const existingCarType = await this.findOne(id);
+  async update(slug: string, updateCarTypeDto: UpdateCarTypeDto) {
+    const foundCarType = await this.findOne(slug);
 
-    const image = updateCarTypeDto.imageId && (existingCarType.image.id !== updateCarTypeDto.imageId)
+    // check if name or slug is already taken
+    if (foundCarType.name !== updateCarTypeDto.name || foundCarType.slug !== updateCarTypeDto.slug) {
+      const existingCarType = await this.carTypeRepository.findOne({
+        where: [
+          { name: updateCarTypeDto.name },
+          { slug: updateCarTypeDto.slug }
+        ]
+      });
+      if (existingCarType && existingCarType.id !== foundCarType.id) throw new ConflictException('Car type with that name or slug already exists');
+    }
+
+    // Check if image has been changed
+    const image = updateCarTypeDto.imageId && (foundCarType.image.id !== updateCarTypeDto.imageId)
       ? await this.imageService.findOne(updateCarTypeDto.imageId)
-      : null;
+      : foundCarType.image;
 
-    Object.assign(existingCarType, {
+    Object.assign(foundCarType, {
       ...updateCarTypeDto,
       image: image,
     });
 
-    const savedCarType = await this.carTypeRepository.save(existingCarType);
+    const savedCarType = await this.carTypeRepository.save(foundCarType);
 
-    return {
-      message: 'CarType updated',
-      carType: {
-        id: savedCarType.id,
-        name: savedCarType.name,
-      }
-    }
+    return this.carTypeMutationReturn(savedCarType, 'update');
   }
 
-  async remove(id: string) {
-    const existingCarType = await this.findOne(id);
+  async remove(slug: string) {
+    const existingCarType = await this.findOne(slug);
     await this.carTypeRepository.remove(existingCarType);
 
     return {
       message: 'CarType removed',
+    }
+  }
+
+  async carTypeMutationReturn(carType: CarType, type: 'create' | 'update') {
+    return {
+      message: `${type === 'create' ? 'Car type created' : 'Car type updated'}`,
+      carType: {
+        id: carType.id,
+        name: carType.name,
+        slug: carType.slug,
+      }
     }
   }
 }
