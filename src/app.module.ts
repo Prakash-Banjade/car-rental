@@ -24,6 +24,7 @@ import { AddressesModule } from './addresses/addresses.module';
 import { ImagesModule } from './images/images.module';
 import { BrandsModule } from './brands/brands.module';
 import { CarTypesModule } from './car-types/car-types.module';
+import { ModelsModule } from './models/models.module';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { CarTypesModule } from './car-types/car-types.module';
     ]),
     BrandsModule,
     CarTypesModule,
+    ModelsModule,
   ],
   controllers: [AppController],
   providers: [
