@@ -26,3 +26,25 @@ export enum Gender {
     FEMALE = 'female',
     OTHER = 'other',
 }
+
+export enum EGearBox {
+    AT = 'automatic-transmission',
+    MT = 'manual-transmission',
+    CVT = 'continuously-variable-transmission',
+    SAT = 'semi-automatic-transmission',
+    DCT = 'dual-clutch-transmission',
+    TT = 'tiptronic-transmission'
+}
+
+export enum EFuelType {
+    PETROL = 'petrol',
+    DIESEL = 'diesel',
+    ELECTRIC = 'electric',
+    HYBRID = 'hybrid',
+}
+
+export enum EModelStatus {
+    AVAILABLE = 'available',
+    RENTED = 'rented',
+    MAINTENANCE = 'maintenance',
+}
