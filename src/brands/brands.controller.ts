@@ -27,22 +27,22 @@ export class BrandsController {
   }
 
   @Public()
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.brandsService.findOne(id);
+  @Get(':slug')
+  findOne(@Param('slug') slug: string) {
+    return this.brandsService.findOne(slug);
   }
 
   @ApiBearerAuth()
-  @Patch(':id')
+  @Patch(':slug')
   @ChekcAbilities({ subject: 'all', action: Action.UPDATE })
-  update(@Param('id') id: string, @Body() updateBrandDto: UpdateBrandDto) {
-    return this.brandsService.update(id, updateBrandDto);
+  update(@Param('slug') slug: string, @Body() updateBrandDto: UpdateBrandDto) {
+    return this.brandsService.update(slug, updateBrandDto);
   }
 
   @ApiBearerAuth()
-  @Delete(':id')
+  @Delete(':slug')
   @ChekcAbilities({ subject: 'all', action: Action.DELETE })
-  remove(@Param('id') id: string) {
-    return this.brandsService.remove(id);
+  remove(@Param('slug') slug: string) {
+    return this.brandsService.remove(slug);
   }
 }

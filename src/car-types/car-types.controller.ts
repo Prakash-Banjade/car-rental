@@ -27,22 +27,22 @@ export class CarTypesController {
   }
 
   @Public()
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.carTypesService.findOne(id);
+  @Get(':slug')
+  findOne(@Param('slug') slug: string) {
+    return this.carTypesService.findOne(slug);
   }
 
   @ApiBearerAuth()
-  @Patch(':id')
+  @Patch(':slug')
   @ChekcAbilities({ subject: 'all', action: Action.UPDATE })
-  update(@Param('id') id: string, @Body() updateCarTypeDto: UpdateCarTypeDto) {
-    return this.carTypesService.update(id, updateCarTypeDto);
+  update(@Param('slug') slug: string, @Body() updateCarTypeDto: UpdateCarTypeDto) {
+    return this.carTypesService.update(slug, updateCarTypeDto);
   }
 
   @ApiBearerAuth()
-  @Delete(':id')
+  @Delete(':slug')
   @ChekcAbilities({ subject: 'all', action: Action.DELETE })
-  remove(@Param('id') id: string) {
-    return this.carTypesService.remove(id);
+  remove(@Param('slug') slug: string) {
+    return this.carTypesService.remove(slug);
   }
 }
