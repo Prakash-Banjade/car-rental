@@ -12,5 +12,6 @@ import { ImagesModule } from 'src/images/images.module';
   ],
   controllers: [CarTypesController],
   providers: [CarTypesService],
+  exports: [CarTypesService],
 })
 export class CarTypesModule { }
