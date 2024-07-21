@@ -3,6 +3,7 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AuthModule } from "src/auth/auth.module";
 import { BrandsModule } from "src/brands/brands.module";
 import { CarTypesModule } from "src/car-types/car-types.module";
+import { ModelsModule } from "src/models/models.module";
 import { UsersModule } from "src/users/users.module";
 
 export function setupSwagger(app: INestApplication): void {
@@ -28,6 +29,7 @@ export function setupSwagger(app: INestApplication): void {
             UsersModule,
             CarTypesModule,
             BrandsModule,
+            ModelsModule,
         ],
     });
 
