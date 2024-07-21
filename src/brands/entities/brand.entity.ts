@@ -1,7 +1,8 @@
 import { BaseEntity } from "src/core/entities/base.entity";
 import { generateSlug } from "src/core/utils/generateSlug";
 import { Image } from "src/images/entities/image.entity";
-import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, OneToOne } from "typeorm";
+import { Model } from "src/models/entities/model.entity";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
 
 @Entity()
 export class Brand extends BaseEntity {
@@ -26,4 +27,7 @@ export class Brand extends BaseEntity {
 
     @Column({ type: 'varchar', default: '' })
     website: string;
+
+    @OneToMany(() => Model, (model) => model.brand)
+    models: Model[]
 }
