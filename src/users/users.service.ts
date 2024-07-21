@@ -82,7 +82,7 @@ export class UsersService {
 
     const profileImage = (updateUserDto.profileImageId && existingUser.profileImage.id !== updateUserDto.profileImageId)
       ? await this.imagesService.findOne(updateUserDto.profileImageId)
-      : null;
+      : existingUser.profileImage;
 
     // update user
     Object.assign(existingUser, {
