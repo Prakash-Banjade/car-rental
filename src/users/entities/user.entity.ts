@@ -5,6 +5,7 @@ import { Account } from "src/accounts/entities/account.entity";
 import { Address } from "src/addresses/entities/address.entity";
 import { Image } from "src/images/entities/image.entity";
 import { Review } from "src/reviews/entities/review.entity";
+import { Rental } from "src/rentals/entities/rental.entity";
 
 @Entity()
 export class User extends BaseEntity {
@@ -29,4 +30,7 @@ export class User extends BaseEntity {
 
     @OneToMany(() => Review, (review) => review.model)
     reviews: Review[]
+
+    @OneToMany(() => Rental, (rental) => rental.user)
+    rentals: Rental[]
 }
