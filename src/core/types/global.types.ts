@@ -48,3 +48,31 @@ export enum EModelStatus {
     RENTED = 'rented',
     MAINTENANCE = 'maintenance',
 }
+
+export enum ERentalStatus {
+    RENTED = 'rented',
+    RETURNED = 'returned',
+    CANCELLED = 'cancelled',
+}
+
+export enum PaymentMethod {
+    CASH_ON_DELIVERY = 'cashOnDelivery',
+    CASH = 'cash',
+    CREDIT = 'credit',
+    PAYPAL = 'paypal',
+    STRIPE = 'stripe',
+}
+
+export enum PaymentStatus {
+    PENDING = 'pending',
+    AWATING_PAYMENT = 'awaitingPayment',
+    COMPLETED = 'completed',
+    FAILED = 'failed',
+}
+
+export enum ReportPeriod {
+    DAY = 'day',
+    WEEK = 'week',
+    MONTH = 'month',
+    YEAR = 'year'
+}
