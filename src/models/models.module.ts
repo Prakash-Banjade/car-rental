@@ -18,5 +18,6 @@ import { BrandsModule } from 'src/brands/brands.module';
   ],
   controllers: [ModelsController],
   providers: [ModelsService],
+  exports: [ModelsService],
 })
 export class ModelsModule { }
