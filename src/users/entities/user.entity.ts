@@ -1,9 +1,10 @@
 import { BaseEntity } from "src/core/entities/base.entity";
-import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
 import { Gender } from "src/core/types/global.types";
 import { Account } from "src/accounts/entities/account.entity";
 import { Address } from "src/addresses/entities/address.entity";
 import { Image } from "src/images/entities/image.entity";
+import { Review } from "src/reviews/entities/review.entity";
 
 @Entity()
 export class User extends BaseEntity {
@@ -25,4 +26,7 @@ export class User extends BaseEntity {
 
     @OneToOne(() => Account, account => account.user, { nullable: true })
     account: Account
+
+    @OneToMany(() => Review, (review) => review.model)
+    reviews: Review[]
 }
