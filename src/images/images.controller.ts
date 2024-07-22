@@ -3,10 +3,11 @@ import { ImagesService } from './images.service';
 import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageDto } from './dto/update-image.dto';
 import { AuthUser } from 'src/core/types/global.types';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
 import { CurrentUser } from 'src/core/decorators/user.decorator';
 
+@ApiBearerAuth()
 @ApiTags('Upload Images')
 @Controller('images') // route-path: /upload/images
 export class ImagesController {

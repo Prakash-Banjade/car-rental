@@ -1,11 +1,12 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { AuthUser } from 'src/core/types/global.types';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
 import { CurrentUser } from 'src/core/decorators/user.decorator';
 import { ImageGalleriesService } from './image-galleries.service';
 import { ImageGalleryDto } from './dto/image-gallery.dto';
 
+@ApiBearerAuth()
 @ApiTags('Upload ImageGallery')
 @Controller('galleries') // route-path: /upload/galleries
 export class ImageGalleriesController {
