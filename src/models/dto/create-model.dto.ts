@@ -1,5 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
 import { EFuelType, EGearBox, EModelStatus } from "src/core/types/global.types";
 
 export class CreateModelDto {
@@ -33,14 +33,44 @@ export class CreateModelDto {
     @IsNotEmpty()
     color: string;
 
+    @ApiProperty({ type: String, description: 'Model accleration', example: `0–100 km/h: 3.8 seconds` })
+    @IsString()
+    @IsNotEmpty()
+    accleration: string;
+
+    @ApiProperty({ type: String, description: 'Model Transmission', example: `Robotic 7` })
+    @IsString()
+    @IsNotEmpty()
+    transmission: string;
+
+    @ApiProperty({ type: Number, description: 'Model engine volume', example: `2993 cc` })
+    @IsNumber()
+    @IsNotEmpty()
+    engineVolume: number;
+
+    @ApiProperty({ type: Number, description: 'Model power', example: `570 hp` })
+    @IsNumber()
+    @IsNotEmpty()
+    power: number;
+
+    @ApiProperty({ type: String, description: 'Model drive train', example: `Full (4WD)` })
+    @IsString()
+    @IsNotEmpty()
+    driveTrain: string;
+
     @ApiProperty({ type: Number, description: 'Number of seats', example: 5 })
     @IsInt()
     @IsNotEmpty()
     seatCount: number;
 
-    @ApiProperty({ type: 'enum', enum: EGearBox, description: 'Model gear box', example: EGearBox.MT })
-    @IsEnum(EGearBox)
+    @ApiProperty({ type: Boolean, description: 'Does the model have navigation?', example: true })
+    @IsBoolean()
     @IsNotEmpty()
+    navigation: boolean;
+
+    @ApiPropertyOptional({ type: 'enum', enum: EGearBox, description: 'Model gear box', example: EGearBox.MT })
+    @IsEnum(EGearBox)
+    @IsOptional()
     gearBox: EGearBox;
 
     @ApiProperty({ type: Number, description: 'Number of doors', example: 5 })

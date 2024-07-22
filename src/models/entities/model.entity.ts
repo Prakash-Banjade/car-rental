@@ -5,7 +5,8 @@ import { EFuelType, EGearBox, EModelStatus } from "src/core/types/global.types";
 import { generateSlug } from "src/core/utils/generateSlug";
 import { ImageGallery } from "src/images/entities/image-gallery.entity";
 import { Image } from "src/images/entities/image.entity";
-import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToOne } from "typeorm";
+import { Review } from "src/reviews/entities/review.entity";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
 @Entity()
 export class Model extends BaseEntity {
@@ -33,11 +34,29 @@ export class Model extends BaseEntity {
     @Column({ type: 'varchar', length: 255 })
     color: string;
 
+    @Column({ type: 'real' })
+    power: number;
+
+    @Column({ type: 'varchar', length: 255 })
+    accleration: string;
+
+    @Column({ type: 'varchar', length: 255 })
+    driveTrain: string;
+
+    @Column({ type: 'boolean' })
+    navigation: boolean
+
     @Column({ type: 'int' })
     seatCount: number;
 
-    @Column({ type: 'enum', enum: EGearBox })
+    @Column({ type: 'enum', enum: EGearBox, nullable: true })
     gearBox: EGearBox;
+
+    @Column({ type: 'varchar' })
+    transmission: string;
+
+    @Column({ type: 'real' })
+    engineVolume: number;
 
     @Column({ type: 'int' })
     doorCount: number;
@@ -56,6 +75,9 @@ export class Model extends BaseEntity {
 
     @Column({ type: 'real' })
     dailyRentalRate: number;
+
+    @Column({ type: 'real', default: 0 })
+    rating: number
 
     /**
     |--------------------------------------------------
@@ -76,6 +98,9 @@ export class Model extends BaseEntity {
     @OneToOne(() => ImageGallery)
     @JoinColumn({ name: 'galleryId' })
     gallery: ImageGallery;
+
+    @OneToMany(() => Review, (review) => review.model)
+    reviews: Review[]
 
     // TODO: Add relation for REVIEW, RENTAL, MAINTENANCE
 
