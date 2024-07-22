@@ -49,5 +49,17 @@ export const modelColumnsConfig: FindOptionsSelect<Model> = {
             id: true,
             url: true
         }
-    }
+    },
+    reviews: {
+        id: true,
+        rating: true,
+        comment: true,
+        user: {
+            id: true,
+            account: {
+                firstName: true,
+                lastName: true,
+            }
+        }
+    },
 }

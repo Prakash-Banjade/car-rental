@@ -72,6 +72,11 @@ export class ModelsService {
       where: { slug },
       relations: {
         featuredImage: true,
+        reviews: {
+          user: {
+            account: true
+          }
+        },
         gallery: {
           images: true
         },
