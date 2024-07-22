@@ -25,6 +25,10 @@ import { ImagesModule } from './images/images.module';
 import { BrandsModule } from './brands/brands.module';
 import { CarTypesModule } from './car-types/car-types.module';
 import { ModelsModule } from './models/models.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { RentalsModule } from './rentals/rentals.module';
+import { StripeModule } from './stripe/stripe.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -42,6 +46,7 @@ import { ModelsModule } from './models/models.module';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'), // serve static files eg: localhost:3000/filename.png
     }),
+    StripeModule.forRootAsync(),
     ThrottlerModule.forRoot([{
       ttl: 60000, // 10 requests per minute
       limit: 10,
@@ -74,6 +79,9 @@ import { ModelsModule } from './models/models.module';
     BrandsModule,
     CarTypesModule,
     ModelsModule,
+    ReviewsModule,
+    RentalsModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [
