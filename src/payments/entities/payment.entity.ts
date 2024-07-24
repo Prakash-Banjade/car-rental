@@ -1,11 +1,12 @@
 import { BaseEntity } from "src/core/entities/base.entity";
 import { PaymentMethod, PaymentStatus } from "src/core/types/global.types";
 import { Rental } from "src/rentals/entities/rental.entity";
-import { BeforeInsert, Column, Entity, OneToOne } from "typeorm";
+import { BeforeInsert, Column, Entity, JoinColumn, OneToOne } from "typeorm";
 
 @Entity()
 export class Payment extends BaseEntity {
-    @OneToOne(() => Rental, (rental) => rental.payment)
+    @OneToOne(() => Rental, (rental) => rental.payment, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'rentalId' })
     rental: Rental
 
     @Column({ type: 'datetime' })

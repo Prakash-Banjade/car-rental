@@ -5,6 +5,7 @@ import { EFuelType, EGearBox, EModelStatus } from "src/core/types/global.types";
 import { generateSlug } from "src/core/utils/generateSlug";
 import { ImageGallery } from "src/images/entities/image-gallery.entity";
 import { Image } from "src/images/entities/image.entity";
+import { RentalItem } from "src/rentals/entities/rental-items.entity";
 import { Review } from "src/reviews/entities/review.entity";
 import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
@@ -102,6 +103,7 @@ export class Model extends BaseEntity {
     @OneToMany(() => Review, (review) => review.model)
     reviews: Review[]
 
-    // TODO: Add relation for REVIEW, RENTAL, MAINTENANCE
+    @OneToMany(() => RentalItem, (rentalItem) => rentalItem.model)
+    rentalItems: RentalItem[]
 
 }

@@ -95,7 +95,7 @@ export class ModelsService {
     const existingModel = await this.findOne(slug);
 
     // check if name or slug is already taken
-    if (existingModel.name !== updateModelDto.name || existingModel.slug !== updateModelDto.slug) {
+    if ((updateModelDto.name && existingModel.name !== updateModelDto.name) || (updateModelDto.slug && existingModel.slug !== updateModelDto.slug)) {
       const existingWithSameNameOrSlug = await this.modelsRepo.findOne({
         where: [
           { name: updateModelDto.name },

@@ -4,11 +4,14 @@ import { Rental } from "./rental.entity";
 export const rentalSelectColsConfig: FindOptionsSelect<Rental> = {
     id: true,
     createdAt: true,
-    startDate: true,
-    endDate: true,
-    pickupLocation: true,
-    returnLocation: true,
     totalAmount: true,
+    status: true,
+    payment: {
+        id: true,
+        amount: true,
+        paymentMethod: true,
+        status: true,
+    },
     user: {
         id: true,
         account: {
@@ -17,17 +20,25 @@ export const rentalSelectColsConfig: FindOptionsSelect<Rental> = {
             lastName: true,
         }
     },
-    model: {
+    rentalItems: {
         id: true,
-        slug: true,
-        name: true,
-        featuredImage: {
+        model: {
             id: true,
-            url: true,
-        },
-        brand: {
-            id: true,
+            slug: true,
             name: true,
-        }
+            featuredImage: {
+                id: true,
+                url: true,
+            },
+            brand: {
+                id: true,
+                name: true,
+            }
+        },
+        startDate: true,
+        endDate: true,
+        pickupLocation: true,
+        returnLocation: true,
+        totalAmount: true,
     }
 };

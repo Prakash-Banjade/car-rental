@@ -4,11 +4,13 @@ import { RentalsController } from './rentals.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Rental } from './entities/rental.entity';
 import { PaymentsModule } from 'src/payments/payments.module';
+import { RentalItem } from './entities/rental-items.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Rental
+      Rental,
+      RentalItem,
     ]),
     PaymentsModule,
   ],

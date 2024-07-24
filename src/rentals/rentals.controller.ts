@@ -9,7 +9,10 @@ import { TransactionInterceptor } from 'src/core/interceptors/transaction.interc
 import { ApiPaginatedResponse } from 'src/core/decorators/apiPaginatedResponse.decorator';
 import { ChekcAbilities } from 'src/core/decorators/abilities.decorator';
 import { User } from 'src/users/entities/user.entity';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('Rentals')
 @Controller('rentals')
 export class RentalsController {
   constructor(private readonly rentalsService: RentalsService) { }
@@ -22,8 +25,8 @@ export class RentalsController {
 
   @Get()
   @ApiPaginatedResponse(CreateRentalDto)
-  findAll(@Query() queryDto: RentalQueryDto) {
-    return this.rentalsService.findAll(queryDto);
+  findAll(@Query() queryDto: RentalQueryDto, @CurrentUser() currentUser: AuthUser) {
+    return this.rentalsService.findAll(queryDto, currentUser);
   }
 
   @Get(':id')
@@ -42,6 +45,6 @@ export class RentalsController {
   @ChekcAbilities({ action: Action.UPDATE, subject: 'all' })
   @UseInterceptors(TransactionInterceptor)
   update(@Param('id') id: string, @Body() updateRentalDto: UpdateRentalDto) {
-    return this.rentalsService.update(id, updateRentalDto);
+    return this.rentalsService.updateRental(id, updateRentalDto);
   }
 }

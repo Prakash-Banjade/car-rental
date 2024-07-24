@@ -44,13 +44,15 @@ export enum EFuelType {
 }
 
 export enum EModelStatus {
+    BOOKED = 'booked',
     AVAILABLE = 'available',
     RENTED = 'rented',
     MAINTENANCE = 'maintenance',
 }
 
 export enum ERentalStatus {
-    RENTED = 'rented',
+    BOOKED = 'booked',
+    ACTIVE = 'active', 
     RETURNED = 'returned',
     CANCELLED = 'cancelled',
 }
