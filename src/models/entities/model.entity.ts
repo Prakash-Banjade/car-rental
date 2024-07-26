@@ -3,7 +3,6 @@ import { CarType } from "src/car-types/entities/car-type.entity";
 import { BaseEntity } from "src/core/entities/base.entity";
 import { EFuelType, EGearBox, EModelStatus } from "src/core/types/global.types";
 import { generateSlug } from "src/core/utils/generateSlug";
-import { ImageGallery } from "src/images/entities/image-gallery.entity";
 import { Image } from "src/images/entities/image.entity";
 import { RentalItem } from "src/rentals/entities/rental-items.entity";
 import { Review } from "src/reviews/entities/review.entity";
@@ -96,9 +95,8 @@ export class Model extends BaseEntity {
     @JoinColumn({ name: 'featuredImageId' })
     featuredImage: Image
 
-    @OneToOne(() => ImageGallery)
-    @JoinColumn({ name: 'galleryId' })
-    gallery: ImageGallery;
+    @OneToMany(() => Image, (image) => image.model)
+    gallery: Image[];
 
     @OneToMany(() => Review, (review) => review.model)
     reviews: Review[]

@@ -3,11 +3,10 @@ import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageDto } from './dto/update-image.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Image } from './entities/image.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { AuthUser } from 'src/core/types/global.types';
 import { getImageMetadata } from 'src/core/utils/getImageMetadata';
 import { AccountsService } from 'src/accounts/accounts.service';
-import { ImageGallery } from './entities/image-gallery.entity';
 
 @Injectable()
 export class ImagesService {
@@ -37,39 +36,16 @@ export class ImagesService {
     }
   }
 
-  async uploadInBulk(createImageDtos: CreateImageDto[], imageGallery: ImageGallery, currentUser: AuthUser) {
-    const querybuilder = this.imagesRepository.createQueryBuilder('image');
-    const account = await this.accountService.findOne(currentUser.accountId);
-
-    // insert values array
-    const insertValues = createImageDtos.map(createImageDto => {
-      const metaData = getImageMetadata(createImageDto.image);
-
-      return ({
-        ...metaData,
-        name: createImageDto.name,
-        uploadedBy: account,
-        imageGallery: imageGallery
-      })
-    })
-
-    const data = await querybuilder.insert().values(insertValues).execute();
-
-    return {
-      message: 'Gallery Updated',
-      gallery: {
-        id: imageGallery.id,
-        images: insertValues.map((image, ind) => ({
-          url: image.url,
-          id: data.generatedMaps[ind].id
-        }))
-      }
-    }
-
-  }
-
   async findAll() {
     return `This action returns all images`;
+  }
+
+  async findAllByIds(ids: string[]) {
+    return await this.imagesRepository.find({
+      where: {
+        id: In(ids)
+      }
+    })
   }
 
   async findOne(id: string, currentUser?: AuthUser) {

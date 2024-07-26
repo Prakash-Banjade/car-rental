@@ -10,7 +10,6 @@ import { Deleted } from 'src/core/dto/query.dto';
 import paginatedData from 'src/core/utils/paginatedData';
 import { BrandsService } from 'src/brands/brands.service';
 import { CarTypesService } from 'src/car-types/car-types.service';
-import { ImageGalleriesService } from 'src/images/image-galleries.service';
 import { modelColumnsConfig, modelsColumnsConfig } from './entities/model-select-cols';
 import { applySelectColumns } from 'src/core/utils/apply-select-cols';
 
@@ -19,22 +18,21 @@ export class ModelsService {
   constructor(
     @InjectRepository(Model) private readonly modelsRepo: Repository<Model>,
     private readonly imagesService: ImagesService,
-    private readonly imageGalleriesService: ImageGalleriesService,
     private readonly brandsService: BrandsService,
     private readonly carTypesService: CarTypesService,
   ) { }
 
   async create(createModelDto: CreateModelDto) {
     const featuredImage = await this.imagesService.findOne(createModelDto.featuredImageId);
-    const gallery = await this.imageGalleriesService.findOne(createModelDto.galleryId);
     const brand = await this.brandsService.findOne(createModelDto.brandSlug);
+    const gallery = await this.imagesService.findAllByIds(createModelDto.galleryIds);
     const carType = await this.carTypesService.findOne(createModelDto.carTypeSlug);
 
     const newModel = this.modelsRepo.create({
       ...createModelDto,
       featuredImage,
-      gallery,
       brand,
+      gallery,
       carType
     })
 
@@ -55,7 +53,6 @@ export class ModelsService {
       .where({ deletedAt })
       .leftJoin("model.featuredImage", "featuredImage")
       .leftJoin("model.gallery", "gallery")
-      .leftJoin("gallery.images", "images")
       .leftJoin("model.brand", "brand")
       .leftJoin("model.carType", "carType")
       .andWhere(new Brackets(qb => {
@@ -77,9 +74,7 @@ export class ModelsService {
             account: true
           }
         },
-        gallery: {
-          images: true
-        },
+        gallery: true,
         brand: {
           logo: true
         },

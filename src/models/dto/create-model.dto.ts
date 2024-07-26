@@ -108,10 +108,10 @@ export class CreateModelDto {
     @IsNotEmpty()
     featuredImageId: string;
 
-    @ApiProperty({ type: String, format: 'uuid', description: 'Id of gallery', example: '123e4567-e89b-12d3-a456-426655440000' })
-    @IsUUID()
-    @IsNotEmpty()
-    galleryId: string;
+    @ApiProperty({ type: [String], format: 'uuid', description: 'Ids of images', example: '[123e4567-e89b-12d3-a456-426655440000, 123e4567-e89b-12d3-a456-426655440000]' })
+    @IsUUID("all", { each: true })
+    @IsNotEmpty({ each: true })
+    galleryIds: string[];
 
     /**
     |--------------------------------------------------

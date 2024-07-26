@@ -13,10 +13,7 @@ export const modelsColumnsConfig: FindOptionsSelect<Model> = {
     },
     gallery: {
         id: true,
-        images: {
-            id: true,
-            url: true
-        }
+        url: true,
     }
 };
 
@@ -36,10 +33,7 @@ export const modelColumnsConfig: FindOptionsSelect<Model> = {
     },
     gallery: {
         id: true,
-        images: {
-            id: true,
-            url: true
-        }
+        url: true,
     },
     carType: {
         id: true,

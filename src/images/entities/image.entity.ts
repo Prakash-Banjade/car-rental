@@ -1,7 +1,7 @@
 import { Account } from "src/accounts/entities/account.entity";
 import { BaseEntity } from "src/core/entities/base.entity";
+import { Model } from "src/models/entities/model.entity";
 import { Column, Entity, ManyToOne } from "typeorm";
-import { ImageGallery } from "./image-gallery.entity";
 
 @Entity()
 export class Image extends BaseEntity {
@@ -20,6 +20,8 @@ export class Image extends BaseEntity {
     @ManyToOne(() => Account, account => account.images, { onDelete: 'CASCADE' })
     uploadedBy!: Account
 
-    @ManyToOne(() => ImageGallery, imageGallery => imageGallery.images, { onDelete: 'CASCADE' })
-    imageGallery: ImageGallery
+    // RELATIONS
+
+    @ManyToOne(() => Model, (model) => model.gallery, { onDelete: 'CASCADE' })
+    model: Model
 }
