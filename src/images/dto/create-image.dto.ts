@@ -1,6 +1,6 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, OmitType } from "@nestjs/swagger";
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { FileSystemStoredFile, HasMimeType, IsFile, MaxFileSize } from "nestjs-form-data";
+import { HasMimeType, IsFile, MaxFileSize, MemoryStoredFile } from "nestjs-form-data";
 
 export class CreateImageDto {
     @ApiProperty({ type: String, format: 'binary', description: 'Image' })
@@ -8,7 +8,7 @@ export class CreateImageDto {
     @IsFile()
     @MaxFileSize(5 * 1024 * 1024)
     @IsNotEmpty()
-    image: FileSystemStoredFile
+    image: MemoryStoredFile
 
     @ApiProperty()
     @IsString()

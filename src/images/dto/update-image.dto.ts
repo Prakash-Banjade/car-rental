@@ -1,4 +1,10 @@
-import { PartialType } from '@nestjs/swagger';
+import { ApiProperty, OmitType } from '@nestjs/swagger';
 import { CreateImageDto } from './create-image.dto';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-export class UpdateImageDto extends PartialType(CreateImageDto) {}
+export class UpdateImageDto {
+    @ApiProperty({ type: String, description: 'Image Name' })
+    @IsString()
+    @IsNotEmpty()
+    name: string
+}

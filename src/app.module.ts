@@ -41,6 +41,10 @@ import { PaymentsModule } from './payments/payments.module';
       isGlobal: true,
       fileSystemStoragePath: 'public',
       autoDeleteFile: false,
+      limits: {
+        files: 10,
+        fileSize: 5 * 1024 * 1024,
+      },
       cleanupAfterSuccessHandle: false, // !important
     }),
     ServeStaticModule.forRoot({

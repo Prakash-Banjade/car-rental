@@ -11,8 +11,23 @@ export class Image extends BaseEntity {
     @Column({ type: 'varchar' })
     memeType!: string
 
+    @Column({ type: 'varchar' })
+    format!: string
+
+    @Column({ type: 'varchar' })
+    space!: string
+
+    @Column({ type: 'real' })
+    height!: number
+
+    @Column({ type: 'real' })
+    width!: number
+
     @Column({ type: 'int' })
     size!: number
+
+    @Column({ type: 'varchar' })
+    originalName!: string
 
     @Column({ type: 'varchar', default: '' })
     name!: string

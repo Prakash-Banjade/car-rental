@@ -6,7 +6,7 @@ import { RegisterDto } from './dto/register.dto';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/core/decorators/setPublicRoute.decorator';
 import { TransactionInterceptor } from 'src/core/interceptors/transaction.interceptor';
-import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
+import { FormDataRequest } from 'nestjs-form-data';
 import { PasswordChangeRequestDto } from './dto/password-change-req.dto';
 import { Throttle } from '@nestjs/throttler';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
@@ -44,7 +44,7 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     @Post('login')
     @ApiConsumes('multipart/form-data')
-    @FormDataRequest({ storage: FileSystemStoredFile })
+    @FormDataRequest()
     async signIn(@Body() signInDto: SignInDto, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
         const { access_token, new_refresh_token, payload } = await this.authService.signIn(signInDto, req, res, this.refresshCookieOptions);
 
@@ -61,7 +61,7 @@ export class AuthController {
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(TransactionInterceptor)
     @UseGuards(RefreshTokenGuard)
-    @FormDataRequest({ storage: FileSystemStoredFile })
+    @FormDataRequest()
     async refreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
         const refresh_token = req.cookies?.refresh_token;
         if (!refresh_token) throw new UnauthorizedException();
@@ -82,7 +82,7 @@ export class AuthController {
     @Public()
     @Post('register')
     @ApiConsumes('multipart/form-data')
-    @FormDataRequest({ storage: FileSystemStoredFile })
+    @FormDataRequest()
     @UseInterceptors(TransactionInterceptor)
     async register(@Body() registerDto: RegisterDto) {
         return await this.authService.register(registerDto);
@@ -91,7 +91,7 @@ export class AuthController {
     @Public()
     @Post('verifyEmail')
     @ApiConsumes('multipart/form-data')
-    @FormDataRequest({ storage: FileSystemStoredFile })
+    @FormDataRequest()
     @UseInterceptors(TransactionInterceptor)
     async verifyEmail(@Body() emailVerificationDto: EmailVerificationDto) {
         return await this.authService.verifyEmail(emailVerificationDto);

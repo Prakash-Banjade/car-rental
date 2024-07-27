@@ -1,14 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Res } from '@nestjs/common';
 import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageDto } from './dto/update-image.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Image } from './entities/image.entity';
-import { Brackets, In, Repository } from 'typeorm';
+import { Brackets, In, Like, Repository } from 'typeorm';
 import { AuthUser, Roles } from 'src/core/types/global.types';
 import { getImageMetadata } from 'src/core/utils/getImageMetadata';
 import { AccountsService } from 'src/accounts/accounts.service';
 import { QueryDto } from 'src/core/dto/query.dto';
 import paginatedData from 'src/core/utils/paginatedData';
+import path from 'path';
+import fs from 'fs';
+import { Response } from 'express';
 
 @Injectable()
 export class ImagesService {
@@ -18,12 +21,13 @@ export class ImagesService {
   ) { }
 
   async upload(createImageDto: CreateImageDto, currentUser: AuthUser) {
-    const metaData = getImageMetadata(createImageDto.image);
+    const metaData = await getImageMetadata(createImageDto.image);
+
     const account = await this.accountService.findOne(currentUser.accountId);
 
     const image = this.imagesRepository.create({
       ...metaData,
-      name: createImageDto.name || account.firstName + ' ' + account.lastName,
+      name: createImageDto.name || metaData.originalName,
       uploadedBy: account
     })
 
@@ -45,10 +49,13 @@ export class ImagesService {
       .orderBy('image.createdAt', 'DESC')
       .skip(queryDto.skip)
       .take(queryDto.take)
-      .leftJoin('image.uploadedBy', 'uploadedBy')
+      .leftJoin('image.uploadedBy', 'account')
       .where(new Brackets(qb => {
         currentUser.role !== Roles.ADMIN && qb.where({ uploadedBy: { id: currentUser.accountId } })
       }))
+      .select([
+        'image', 'account.id', 'account.firstName', 'account.lastName', 'account.email',
+      ])
 
     return paginatedData(queryDto, queryBuilder);
   }
@@ -61,10 +68,10 @@ export class ImagesService {
     })
   }
 
-  async findOne(id: string, currentUser?: AuthUser) {
+  async findOne(slug: string, currentUser?: AuthUser) {
     const existingImage = await this.imagesRepository.findOne({
       where: {
-        id,
+        url: Like(`%${slug}`),
         uploadedBy: {
           id: currentUser?.accountId
         }
@@ -72,30 +79,38 @@ export class ImagesService {
     });
     if (!existingImage) throw new NotFoundException('Image not found');
 
+
+
     return existingImage
+  }
+
+  async serveImage(filename: string, @Res() res: Response) {
+    const imagePath = path.join(process.cwd(), 'public', filename);
+
+    fs.stat(imagePath, (err, stats) => {
+      if (err) {
+        if (err.code === 'ENOENT') {
+          throw new NotFoundException('Image not found');
+        } else {
+          throw new Error(err.message);
+        }
+      }
+
+      // Set appropriate headers
+      res.setHeader('Content-Type', 'image/' + path.extname(filename).substring(1));
+      res.setHeader('Content-Length', stats.size);
+
+      // Stream the file to the response
+      const readStream = fs.createReadStream(imagePath);
+      readStream.pipe(res);
+    });
   }
 
   async update(id: string, updateImageDto: UpdateImageDto, currentUser: AuthUser) {
     const existing = await this.findOne(id, currentUser?.role !== 'admin' ? currentUser : undefined);
 
-    if (!updateImageDto.image) { // only name is provided
-      existing.name = updateImageDto.name;
-      const savedImage = await this.imagesRepository.save(existing);
-      return {
-        message: 'Image updated',
-        image: {
-          url: savedImage.url,
-          id: savedImage.id
-        }
-      }
-    }
-
-    // image is provided
-    const metaData = getImageMetadata(updateImageDto.image);
-
-    existing.url = metaData.url;
-    existing.memeType = metaData.memeType;
-    existing.size = metaData.size;
+    // update image name only
+    existing.name = updateImageDto.name;
 
     const savedImage = await this.imagesRepository.save(existing);
 
