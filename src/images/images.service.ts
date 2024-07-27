@@ -12,6 +12,8 @@ import paginatedData from 'src/core/utils/paginatedData';
 import path from 'path';
 import fs from 'fs';
 import { Response } from 'express';
+import { applySelectColumns } from 'src/core/utils/apply-select-cols';
+import { imageSelectColumns } from './entities/image-select-cols.config';
 
 @Injectable()
 export class ImagesService {
@@ -21,24 +23,23 @@ export class ImagesService {
   ) { }
 
   async upload(createImageDto: CreateImageDto, currentUser: AuthUser) {
-    const metaData = await getImageMetadata(createImageDto.image);
-
     const account = await this.accountService.findOne(currentUser.accountId);
 
-    const image = this.imagesRepository.create({
-      ...metaData,
-      name: createImageDto.name || metaData.originalName,
-      uploadedBy: account
-    })
+    for (const uploadImage of createImageDto.images) {
+      const metaData = await getImageMetadata(uploadImage);
 
-    const savedImage = await this.imagesRepository.save(image);
+      const newImage = this.imagesRepository.create({
+        ...metaData,
+        name: createImageDto.name || metaData.originalName,
+        uploadedBy: account
+      })
+
+      await this.imagesRepository.save(newImage);
+    }
 
     return {
-      message: 'Image Uploaded',
-      image: {
-        url: savedImage.url,
-        id: savedImage.id
-      }
+      message: 'Image(s) Uploaded',
+      count: createImageDto.images.length,
     }
   }
 
@@ -49,13 +50,12 @@ export class ImagesService {
       .orderBy('image.createdAt', 'DESC')
       .skip(queryDto.skip)
       .take(queryDto.take)
-      .leftJoin('image.uploadedBy', 'account')
+      .leftJoin('image.uploadedBy', 'uploadedBy')
       .where(new Brackets(qb => {
         currentUser.role !== Roles.ADMIN && qb.where({ uploadedBy: { id: currentUser.accountId } })
       }))
-      .select([
-        'image', 'account.id', 'account.firstName', 'account.lastName', 'account.email',
-      ])
+
+    applySelectColumns(queryBuilder, imageSelectColumns, 'image');
 
     return paginatedData(queryDto, queryBuilder);
   }
