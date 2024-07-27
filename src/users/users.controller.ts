@@ -27,6 +27,11 @@ export class UsersController {
     return this.usersService.findAll(queryDto);
   }
 
+  @Get('me')
+  getMyInfo(@CurrentUser() currentUser: AuthUser) {
+    return this.usersService.myDetails(currentUser);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
