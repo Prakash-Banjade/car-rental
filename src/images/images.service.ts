@@ -3,10 +3,12 @@ import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageDto } from './dto/update-image.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Image } from './entities/image.entity';
-import { In, Repository } from 'typeorm';
-import { AuthUser } from 'src/core/types/global.types';
+import { Brackets, In, Repository } from 'typeorm';
+import { AuthUser, Roles } from 'src/core/types/global.types';
 import { getImageMetadata } from 'src/core/utils/getImageMetadata';
 import { AccountsService } from 'src/accounts/accounts.service';
+import { QueryDto } from 'src/core/dto/query.dto';
+import paginatedData from 'src/core/utils/paginatedData';
 
 @Injectable()
 export class ImagesService {
@@ -36,8 +38,19 @@ export class ImagesService {
     }
   }
 
-  async findAll() {
-    return `This action returns all images`;
+  async findAll(queryDto: QueryDto, currentUser: AuthUser) {
+    const queryBuilder = this.imagesRepository.createQueryBuilder('image');
+
+    queryBuilder
+      .orderBy('image.createdAt', 'DESC')
+      .skip(queryDto.skip)
+      .take(queryDto.take)
+      .leftJoin('image.uploadedBy', 'uploadedBy')
+      .where(new Brackets(qb => {
+        currentUser.role !== Roles.ADMIN && qb.where({ uploadedBy: { id: currentUser.accountId } })
+      }))
+
+    return paginatedData(queryDto, queryBuilder);
   }
 
   async findAllByIds(ids: string[]) {
