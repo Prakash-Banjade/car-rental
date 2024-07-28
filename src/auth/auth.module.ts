@@ -10,6 +10,7 @@ import { UsersModule } from 'src/users/users.module';
 import { PasswordChangeRequest } from './entities/password-change-request.entity';
 import { EmailVerificationPending } from './entities/email-verification-pending.entity';
 import { AuthRepository } from './repository/auth.repository';
+import { ImagesModule } from 'src/images/images.module';
 require('dotenv').config();
 
 @Module({
@@ -22,6 +23,7 @@ require('dotenv').config();
     }),
     AccountsModule,
     UsersModule,
+    ImagesModule,
   ],
   controllers: [AuthController],
   providers: [
