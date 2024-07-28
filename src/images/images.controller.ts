@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Req, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Res } from '@nestjs/common';
 import { ImagesService } from './images.service';
 import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageDto } from './dto/update-image.dto';
@@ -30,7 +30,6 @@ export class ImagesController {
   @Public()
   @Get('get-image/:slug')
   getImage(@Param("slug") slug: string, @Res() res: Response, @CurrentUser() currentUser?: AuthUser) {
-    console.log('hi')
     return this.imagesService.serveImage(slug, res);
   }
 
