@@ -68,18 +68,16 @@ export class ImagesService {
     })
   }
 
-  async findOne(slug: string, currentUser?: AuthUser) {
+  async findOne(id: string, currentUser?: AuthUser) {
     const existingImage = await this.imagesRepository.findOne({
       where: {
-        url: Like(`%${slug}`),
+        id,
         uploadedBy: {
           id: currentUser?.accountId
         }
       },
     });
     if (!existingImage) throw new NotFoundException('Image not found');
-
-
 
     return existingImage
   }
