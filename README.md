@@ -13,8 +13,9 @@
 
 ## Features 
 1. Authentication & Authorization
-2. Car Rental System
-3. Stripe Payment Gateway
+2. Google OAuth
+3. Car Rental System
+4. Stripe Payment Gateway
 
 ## Environment Configuration
 
@@ -41,4 +42,8 @@ CLIENT_URL=
 
 STRIPE_API_KEY=
 STRIPE_PUBLISHABLE_KEY=
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REDIRECT_URI=
 ```
