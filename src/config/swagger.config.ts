@@ -1,5 +1,6 @@
 import { INestApplication } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { AppSettingsModule } from "src/app-settings/app-settings.module";
 import { AuthModule } from "src/auth/auth.module";
 import { BrandsModule } from "src/brands/brands.module";
 import { CarTypesModule } from "src/car-types/car-types.module";
@@ -38,6 +39,7 @@ export function setupSwagger(app: INestApplication): void {
             ReviewsModule,
             RentalsModule,
             PaymentsModule,
+            AppSettingsModule,
         ],
     });
 
