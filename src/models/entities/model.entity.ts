@@ -70,7 +70,7 @@ export class Model extends BaseEntity {
     @Column({ type: 'varchar' })
     baggage: string;
 
-    @Column({ type: 'enum', enum: EModelStatus })
+    @Column({ type: 'enum', enum: EModelStatus, default: EModelStatus.AVAILABLE })
     status: EModelStatus;
 
     @Column({ type: 'real' })

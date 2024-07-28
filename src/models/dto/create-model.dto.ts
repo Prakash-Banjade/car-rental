@@ -93,10 +93,10 @@ export class CreateModelDto {
     @IsNotEmpty()
     baggage: string;
 
-    @ApiProperty({ type: 'enum', enum: EModelStatus, description: 'Model status', example: EModelStatus.AVAILABLE })
+    @ApiPropertyOptional({ type: 'enum', enum: EModelStatus, description: 'Model status', example: EModelStatus.AVAILABLE })
     @IsEnum(EModelStatus)
-    @IsNotEmpty()
-    status: EModelStatus;
+    @IsOptional()
+    status?: EModelStatus;
 
     @ApiProperty({ type: Number, description: 'Daily Rental Rate', example: 1000 })
     @IsNumber()
