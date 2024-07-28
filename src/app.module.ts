@@ -29,6 +29,7 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { RentalsModule } from './rentals/rentals.module';
 import { StripeModule } from './stripe/stripe.module';
 import { PaymentsModule } from './payments/payments.module';
+import { AppSettingsModule } from './app-settings/app-settings.module';
 
 @Module({
   imports: [
@@ -86,6 +87,7 @@ import { PaymentsModule } from './payments/payments.module';
     ReviewsModule,
     RentalsModule,
     PaymentsModule,
+    AppSettingsModule,
   ],
   controllers: [AppController],
   providers: [
