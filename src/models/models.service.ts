@@ -115,11 +115,17 @@ export class ModelsService {
       ? await this.carTypesService.findOne(updateModelDto.carTypeSlug)
       : existingModel.carType;
 
+    // update gallery
+    const gallery = updateModelDto.galleryIds?.length
+      ? await this.imagesService.findAllByIds(updateModelDto.galleryIds)
+      : existingModel.gallery;
+
     Object.assign(existingModel, {
       ...updateModelDto,
       featuredImage,
       brand,
       carType,
+      gallery,
     });
 
     const savedModel = await this.modelsRepo.save(existingModel);
