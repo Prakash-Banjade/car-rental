@@ -46,4 +46,51 @@ export class MailService {
 
         return { result, previewUrl };
     }
+
+    async sendNewsletterVerification(email: string, verificationToken: string) {
+        const result = await this.mailerService.sendMail({
+            to: email,
+            subject: 'Verify your email to subscribe to our newsletter',
+            template: './sendNewsletterSubscribeLink', // `.hbs` extension is appended automatically
+            context: { // ✏️ filling curly brackets with content
+                subscribeUrl: `${this.configService.get('CLIENT_URL')}/newsletter/subscribe?verificationToken=${verificationToken}`,
+            },
+        });
+
+        const previewUrl = nodemailer.getTestMessageUrl(result);
+        console.log('Preview URL:', previewUrl);
+
+        return { result, previewUrl };
+    }
+
+    async subscribeConfirmationNotify(email: string, token: string) {
+        const result = await this.mailerService.sendMail({
+            to: email,
+            subject: 'Successfully subscribed to Car Rental newsletter',
+            template: './newsletterSubscribedNotify', // `.hbs` extension is appended automatically
+            context: { // ✏️ filling curly brackets with content
+                unsubscribeUrl: `${this.configService.get('CLIENT_URL')}/newsletter/unsubscribe?token=${token}`,
+            },
+        });
+
+        const previewUrl = nodemailer.getTestMessageUrl(result);
+        console.log('Preview URL:', previewUrl);
+
+        return { result, previewUrl };
+    }
+
+    async unSubscribeNotify(email: string) {
+        const result = await this.mailerService.sendMail({
+            to: email,
+            subject: 'Unsubscribed to Car Rental newsletter',
+            template: './newsletterUnsubscribeNotify', // `.hbs` extension is appended automatically
+            context: { // ✏️ filling curly brackets with content
+            },
+        });
+
+        const previewUrl = nodemailer.getTestMessageUrl(result);
+        console.log('Preview URL:', previewUrl);
+
+        return { result, previewUrl };
+    }
 }
