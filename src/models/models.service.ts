@@ -57,6 +57,14 @@ export class ModelsService {
       .leftJoin("model.carType", "carType")
       .andWhere(new Brackets(qb => {
         queryDto.search && qb.andWhere('LOWER(model.name) LIKE LOWER(:search)', { search: queryDto.search });
+        queryDto.ratingFrom && queryDto.ratingFrom > 1 && qb.andWhere("model.rating >= :ratingFrom", { ratingFrom: queryDto.ratingFrom });
+        queryDto.ratingTo && qb.andWhere("model.rating <= :ratingTo", { ratingTo: queryDto.ratingTo });
+        queryDto.brandSlug && qb.andWhere('brand.slug = :brandSlug', { brandSlug: queryDto.brandSlug });
+        queryDto.carTypeSlug && qb.andWhere('carType.slug = :carTypeSlug', { carTypeSlug: queryDto.carTypeSlug });
+        queryDto.color && qb.andWhere('model.color = :color', { color: queryDto.color });
+        queryDto.powerFrom && qb.andWhere('model.power >= :powerFrom', { powerFrom: queryDto.powerFrom });
+        queryDto.powerTo && qb.andWhere('model.power <= :powerTo', { powerTo: queryDto.powerTo });
+        queryDto.fuelType && qb.andWhere('model.fuelType = :fuelType', { fuelType: queryDto.fuelType });
       }))
 
     applySelectColumns(queryBuilder, modelsColumnsConfig, 'model');
