@@ -30,6 +30,7 @@ import { RentalsModule } from './rentals/rentals.module';
 import { StripeModule } from './stripe/stripe.module';
 import { PaymentsModule } from './payments/payments.module';
 import { AppSettingsModule } from './app-settings/app-settings.module';
+import { NewsletterModule } from './newsletter/newsletter.module';
 
 @Module({
   imports: [
@@ -88,6 +89,7 @@ import { AppSettingsModule } from './app-settings/app-settings.module';
     RentalsModule,
     PaymentsModule,
     AppSettingsModule,
+    NewsletterModule,
   ],
   controllers: [AppController],
   providers: [

@@ -14,6 +14,8 @@ import fs from 'fs';
 import { Response } from 'express';
 import { applySelectColumns } from 'src/core/utils/apply-select-cols';
 import { imageSelectColumns } from './entities/image-select-cols.config';
+import axios from 'axios';
+import sharp from 'sharp';
 
 @Injectable()
 export class ImagesService {
@@ -102,6 +104,28 @@ export class ImagesService {
       const readStream = fs.createReadStream(imagePath);
       readStream.pipe(res);
     });
+  }
+
+  async saveImageFromUrl(url: string) {
+    // Fetch the image from the URL
+    const response = await axios.get(url, { responseType: 'arraybuffer' });
+    const imageBuffer = Buffer.from(response.data);
+
+    // Analyze the image with sharp
+    const metadata = await sharp(imageBuffer).metadata();
+
+    const image = this.imagesRepository.create({
+      url,
+      memeType: metadata.format,
+      format: metadata.format,
+      space: metadata.space,
+      height: metadata.height,
+      width: metadata.width,
+      size: metadata.size,
+      originalName: url.split('/').pop() || 'unknown', // Extract the file name from URL
+    });
+
+    return await this.imagesRepository.save(image);
   }
 
   async update(id: string, updateImageDto: UpdateImageDto, currentUser: AuthUser) {

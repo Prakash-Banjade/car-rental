@@ -15,7 +15,7 @@ import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { CookieOptions, Request, Response } from 'express';
-import { AuthUser } from 'src/core/types/global.types';
+import { AuthProvider, AuthUser } from 'src/core/types/global.types';
 import { Account } from 'src/accounts/entities/account.entity';
 import { User } from 'src/users/entities/user.entity';
 import { AccountsRepository } from 'src/accounts/repository/account.repository';
@@ -28,6 +28,10 @@ import { EmailVerificationDto } from './dto/email-verification.dto';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 import { generateOtp } from 'src/core/utils/generateOPT';
 import { UsersRepository } from 'src/users/repository/users.repository';
+import { Credentials, OAuth2Client } from 'google-auth-library';
+import { GoogleOAuthDto } from './dto/googleOAuth.dto';
+import { Image } from 'src/images/entities/image.entity';
+import { ImagesService } from 'src/images/images.service';
 require('dotenv').config();
 
 @Injectable()
@@ -41,8 +45,14 @@ export class AuthService {
     private authRepository: AuthRepository,
     @InjectRepository(PasswordChangeRequest) private passwordChangeRequestRepo: Repository<PasswordChangeRequest>,
     @InjectRepository(EmailVerificationPending) private emailVerificationPendingRepo: Repository<EmailVerificationPending>,
-    private mailService: MailService,
+    private readonly mailService: MailService,
+    private readonly imagesService: ImagesService,
   ) { }
+
+  private readonly clientId = process.env.GOOGLE_CLIENT_ID;
+  private readonly clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  private readonly redirectUri = process.env.GOOGLE_REDIRECT_URI
+  private readonly oAuth2Client = new OAuth2Client(this.clientId, this.clientSecret, this.redirectUri);
 
   async signIn(signInDto: SignInDto, req: Request, res: Response, cookieOptions: CookieOptions) {
     const refresh_token = req.cookies?.refresh_token;
@@ -88,6 +98,92 @@ export class AuthService {
     await this.accountsRepo.save(foundAccount);
 
     return { access_token, new_refresh_token, payload };
+  }
+
+  async googleOAuthLogin(googleOAuthDto: GoogleOAuthDto, req: Request, res: Response, cookieOptions: CookieOptions) {
+    const refresh_token = req.cookies?.refresh_token;
+    if (refresh_token) res.clearCookie('refresh_token', cookieOptions); // CLEAR COOKIE, BCZ A NEW ONE IS TO BE GENERATED
+
+    const { code } = googleOAuthDto;
+
+    const { tokens } = await this.oAuth2Client.getToken(code); // exchange code for tokens
+
+    const { email, family_name, given_name, picture, email_verified } = await this.getGoogleUser(tokens);
+    if (!email_verified) throw new BadRequestException('Email not verified');
+
+    // SEARCH FOR THE ACCOUNT IN DB
+    const foundAccount = await this.accountsRepo.findOne({
+      where: { email },
+      relations: { user: true }
+    });
+    let payload: AuthUser;
+    let access_token: string;
+    let new_refresh_token: string;
+
+    // IF NOT FOUND, CREATE A NEW ACCOUNT
+    if (!foundAccount) {
+      const newAccount = this.accountsRepo.create({
+        email,
+        firstName: given_name,
+        lastName: family_name ?? '',
+        provider: AuthProvider.GOOGLE,
+        isVerified: email_verified,
+        password: null,
+      })
+
+      const savedAccount = await this.accountRepository.insert(newAccount);
+
+      // save image in db
+      const image = picture ? await this.imagesService.saveImageFromUrl(picture) : null;
+
+      const newUser = this.usersRepo.create({
+        account: savedAccount,
+        profileImage: image,
+      })
+
+      const savedUser = await this.userRepository.createUser(newUser);
+
+      payload = {
+        email: savedAccount.email,
+        accountId: savedAccount.id,
+        userId: savedUser.id,
+        name: savedAccount.firstName,
+        role: savedAccount.role,
+      }
+
+      // GENERATE TOKENS WITH ABOVE PAYLOAD
+      access_token = await this.createAccessToken(payload);
+      new_refresh_token = await this.createRefreshToken(payload);
+
+      savedAccount.refresh_token = [new_refresh_token];
+      await this.accountRepository.insert(savedAccount);
+
+    } else {
+      payload = {
+        email: foundAccount.email,
+        userId: foundAccount.user.id,
+        accountId: foundAccount.id,
+        name: foundAccount.firstName + ' ' + foundAccount.lastName,
+        role: foundAccount.role,
+      }
+
+      // GENERATE TOKENS WITH ABOVE PAYLOAD
+      access_token = await this.createAccessToken(payload);
+      new_refresh_token = await this.createRefreshToken(payload);
+
+      const newRefreshTokenArray = !refresh_token ? (foundAccount.refresh_token ?? []) : (foundAccount?.refresh_token?.filter((rt) => rt !== refresh_token) ?? [])
+
+      foundAccount.refresh_token = [...newRefreshTokenArray, new_refresh_token];
+
+      await this.accountRepository.insert(foundAccount);
+    }
+
+    return { access_token, new_refresh_token, payload };
+  }
+
+  private async getGoogleUser(tokens: Credentials) {
+    const loginTicket = await this.oAuth2Client.verifyIdToken({ idToken: tokens.id_token, audience: process.env.GOOGLE_CLIENT_ID });
+    return loginTicket.getPayload()
   }
 
   async createAccessToken(payload: AuthUser) {
@@ -319,9 +415,37 @@ export class AuthService {
     const { previewUrl } = await this.mailService.sendResetPasswordLink(foundAccount, resetToken);
     return {
       message: 'Token is valid for 5 minutes',
-      resetToken,
       previewUrl,
     };
+  }
+
+  async verifyResetToken(providedResetToken: string) {
+    // hash the provided token to check in database
+    const hashedResetToken = crypto
+      .createHash('sha256')
+      .update(providedResetToken)
+      .digest('hex');
+
+    // Retrieve the hashed reset token from the database
+    const passwordChangeRequest = await this.passwordChangeRequestRepo.findOneBy({ hashedResetToken });
+
+    if (!passwordChangeRequest) {
+      throw new BadRequestException('Invalid reset token');
+    }
+
+    // Check if the reset token has expired
+    const now = new Date();
+    const resetTokenExpiration = new Date(passwordChangeRequest.createdAt);
+    resetTokenExpiration.setMinutes(resetTokenExpiration.getMinutes() + 5); // 5 minutes
+    if (now > resetTokenExpiration) {
+      await this.passwordChangeRequestRepo.remove(passwordChangeRequest);
+      throw new BadRequestException('Reset token has expired');
+    }
+
+    return {
+      message: 'Token is valid for now',
+      valid: true,
+    }
   }
 
   async resetPassword(password: string, providedResetToken: string) {

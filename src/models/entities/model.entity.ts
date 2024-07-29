@@ -38,7 +38,7 @@ export class Model extends BaseEntity {
     power: number;
 
     @Column({ type: 'varchar', length: 255 })
-    accleration: string;
+    acceleration: string;
 
     @Column({ type: 'varchar', length: 255 })
     driveTrain: string;

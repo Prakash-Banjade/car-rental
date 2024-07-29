@@ -80,7 +80,7 @@ export class UsersService {
     const existingAccount = await this.accountRepo.findOneBy({ id: currentUser.accountId });
     if (!existingAccount) throw new InternalServerErrorException('Unable to update the associated profile. Please contact support.');
 
-    const profileImage = (updateUserDto.profileImageId && existingUser.profileImage.id !== updateUserDto.profileImageId)
+    const profileImage = ((updateUserDto.profileImageId && existingUser.profileImage?.id !== updateUserDto.profileImageId) || !existingUser.profileImage)
       ? await this.imagesService.findOne(updateUserDto.profileImageId)
       : existingUser.profileImage;
 
