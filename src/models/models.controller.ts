@@ -34,7 +34,7 @@ export class ModelsController {
 
   @Patch(':slug')
   @ApiBearerAuth()
-  // @ChekcAbilities({ action: Action.UPDATE, subject: 'all' })
+  @ChekcAbilities({ action: Action.UPDATE, subject: 'all' })
   update(@Param('slug') slug: string, @Body() updateModelDto: UpdateModelDto) {
     return this.modelsService.update(slug, updateModelDto);
   }
