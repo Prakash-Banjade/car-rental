@@ -415,7 +415,6 @@ export class AuthService {
     const { previewUrl } = await this.mailService.sendResetPasswordLink(foundAccount, resetToken);
     return {
       message: 'Token is valid for 5 minutes',
-      resetToken,
       previewUrl,
     };
   }
