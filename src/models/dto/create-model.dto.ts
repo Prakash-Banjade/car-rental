@@ -33,10 +33,10 @@ export class CreateModelDto {
     @IsNotEmpty()
     color: string;
 
-    @ApiProperty({ type: String, description: 'Model accleration', example: `0–100 km/h: 3.8 seconds` })
+    @ApiProperty({ type: String, description: 'Model acceleration', example: `0–100 km/h: 3.8 seconds` })
     @IsString()
     @IsNotEmpty()
-    accleration: string;
+    acceleration: string;
 
     @ApiProperty({ type: String, description: 'Model Transmission', example: `Robotic 7` })
     @IsString()
