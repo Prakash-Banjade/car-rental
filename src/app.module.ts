@@ -31,6 +31,7 @@ import { StripeModule } from './stripe/stripe.module';
 import { PaymentsModule } from './payments/payments.module';
 import { AppSettingsModule } from './app-settings/app-settings.module';
 import { NewsletterModule } from './newsletter/newsletter.module';
+import { BlogsModule } from './blogs/blogs.module';
 
 @Module({
   imports: [
@@ -90,6 +91,7 @@ import { NewsletterModule } from './newsletter/newsletter.module';
     PaymentsModule,
     AppSettingsModule,
     NewsletterModule,
+    BlogsModule,
   ],
   controllers: [AppController],
   providers: [
