@@ -37,7 +37,7 @@ export class MailService {
             template: './sendResetPasswordLink', // `.hbs` extension is appended automatically
             context: { // ✏️ filling curly brackets with content
                 name: account.firstName + ' ' + account.lastName,
-                resetLink: `${this.configService.get('CLIENT_URL')}/reset-password/${resetToken}`,
+                resetLink: `${this.configService.get('CLIENT_URL')}/auth/forget-password?resetToken=${resetToken}`,
             },
         });
 
