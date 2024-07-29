@@ -15,6 +15,7 @@ import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { AuthUser } from 'src/core/types/global.types';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 import { CurrentUser } from 'src/core/decorators/user.decorator';
+import { VerifyResetTokenDto } from './dto/verify-reset-token.dto';
 require('dotenv').config();
 
 @ApiTags('Authentication')
@@ -130,6 +131,14 @@ export class AuthController {
     // @Throttle({ default: { limit: 1, ttl: 5000 } }) // override the default rate limit for password reset
     forgetPassword(@Body() { email }: PasswordChangeRequestDto) {
         return this.authService.forgetPassword(email)
+    }
+
+    @Public()
+    @Post('verifyResetToken')
+    @HttpCode(HttpStatus.OK)
+    // @Throttle({ default: { limit: 1, ttl: 5000 } }) // override the default rate limit for password reset
+    verifyResetToken(@Body() { token }: VerifyResetTokenDto) {
+        return this.authService.verifyResetToken(token)
     }
 
     @Public()
