@@ -12,10 +12,8 @@ import { SeoSettingService } from './seo-settings/seo-settings.service';
 import { Faq } from './entities/faq.entity';
 import { FaqController } from './faq/faq.controller';
 import { FaqService } from './faq/faq.service';
-import { Newsletter } from './newsletter/entity/newsletter.entity';
-import { NewsletterController } from './newsletter/newsletter.controller';
-import { NewsletterService } from './newsletter/newsletter.service';
 import { ImagesModule } from 'src/images/images.module';
+import { NewsletterModule } from './newsletter/newsletter.module';
 
 @Module({
   imports: [
@@ -24,23 +22,21 @@ import { ImagesModule } from 'src/images/images.module';
       SeoSetting,
       CompanyInfoSetting,
       Faq,
-      Newsletter,
     ]),
     ImagesModule,
+    NewsletterModule,
   ],
   controllers: [
     GeneralSettingController,
     CompanyInfoSettingController,
     SeoSettingController,
     FaqController,
-    NewsletterController,
   ],
   providers: [
     GeneralSettingService,
     CompanyInfoSettingService,
     SeoSettingService,
     FaqService,
-    NewsletterService,
   ],
 })
 export class AppSettingsModule { }

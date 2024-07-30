@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
 import { FaqService } from "./faq.service";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { CreateFaqDto, UpdateFaqDto } from "../dto/faq.dto";
 import { Public } from "src/core/decorators/setPublicRoute.decorator";
 import { ChekcAbilities } from "src/core/decorators/abilities.decorator";
@@ -13,6 +13,7 @@ export class FaqController {
         private readonly faqService: FaqService
     ) { }
 
+    @ApiBearerAuth()
     @Post()
     @ChekcAbilities({ subject: 'all', action: Action.CREATE })
     async create(@Body() createFaqDto: CreateFaqDto) {
@@ -31,12 +32,14 @@ export class FaqController {
         return await this.faqService.findOne(id);
     }
 
+    @ApiBearerAuth()
     @Patch(':id')
     @ChekcAbilities({ subject: 'all', action: Action.UPDATE })
     async update(@Param('id') id: string, @Body() updateFaqDto: UpdateFaqDto) {
         return await this.faqService.update(id, updateFaqDto);
     }
 
+    @ApiBearerAuth()
     @Delete(':id')
     @ChekcAbilities({ subject: 'all', action: Action.DELETE })
     async remove(@Param('id') id: string) {

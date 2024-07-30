@@ -1,5 +1,5 @@
 import { Body, Controller, Get, ParseArrayPipe, Post } from "@nestjs/common";
-import { ApiConsumes, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { GeneralSettingService } from "./general-settings.service";
 import { GeneralSettingsDto } from "../dto/general-settings.dto";
 import { FileSystemStoredFile, FormDataRequest } from "nestjs-form-data";
@@ -15,9 +15,9 @@ export class GeneralSettingController {
     ) { }
 
     @Post()
+    @ApiBearerAuth()
     @ApiConsumes('multipart/form-data')
     @ChekcAbilities({ subject: 'all', action: Action.CREATE })
-    @FormDataRequest({ storage: FileSystemStoredFile, limits: { fileSize: 1024 * 1024 * 2, files: 2 } })
     async set(@Body() generalSettingsDto: GeneralSettingsDto) {
         return await this.generalSettingService.set(generalSettingsDto);
     }

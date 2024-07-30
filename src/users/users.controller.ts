@@ -37,9 +37,7 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
-  @FormDataRequest({ storage: MemoryStoredFile })
   @Patch()
-  @ApiConsumes('multipart/form-data')
   update(@Body() updateUserDto: UpdateUserDto, @CurrentUser() currentUser: AuthUser) {
     return this.usersService.update(updateUserDto, currentUser);
   }

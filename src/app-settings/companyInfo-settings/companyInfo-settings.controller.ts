@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from "@nestjs/common";
-import { ApiConsumes, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { CompanyInfoSettingService } from "./companyInfo-settings.service";
 import { CompanyInfoSettingsDto } from "../dto/companyInfo-settings.dto";
 import { FileSystemStoredFile, FormDataRequest } from "nestjs-form-data";
@@ -15,9 +15,9 @@ export class CompanyInfoSettingController {
     ) { }
 
     @Post()
+    @ApiBearerAuth()
     @ApiConsumes('multipart/form-data')
     @ChekcAbilities({ subject: 'all', action: Action.CREATE })
-    @FormDataRequest({ storage: FileSystemStoredFile })
     async set(@Body() companyInfoSettingsDto: CompanyInfoSettingsDto) {
         return await this.companyInfoSettingService.set(companyInfoSettingsDto);
     }

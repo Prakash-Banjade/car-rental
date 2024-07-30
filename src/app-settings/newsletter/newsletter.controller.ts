@@ -1,20 +1,37 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-import { NewsletterService } from "./newsletter.service";
-import { NewsletterDto } from "./dto/newsletter.dto";
+import { Controller, Get, Post, Body, Query } from '@nestjs/common';
+import { CreateNewsletterDto, SubscribeNewsletterDto, UnSubscribeNewsletterDto } from './dto/create-newsletter.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/core/decorators/setPublicRoute.decorator';
+import { QueryDto } from 'src/core/dto/query.dto';
+import { NewsletterService } from './newsletter.service';
 
 @ApiTags('Newsletter')
-@Controller('newsletters')
+@Controller('newsletter')
 export class NewsletterController {
-    constructor(private readonly newsletterService: NewsletterService) { }
+  constructor(private readonly newsletterService: NewsletterService) { }
 
-    @Post()
-    async create(@Body() newsletterDto: NewsletterDto) {
-        return await this.newsletterService.create(newsletterDto);
-    }
+  @ApiBearerAuth()
+  @Get()
+  findAll(@Query() queryDto: QueryDto) {
+    return this.newsletterService.findAll(queryDto);
+  }
 
-    @Get()
-    async findAll() {
-        return await this.newsletterService.findAll();
-    }
+  @Public()
+  @Post('subscribeRequest')
+  subscribeRequest(@Body() createNewsletterDto: CreateNewsletterDto) {
+    return this.newsletterService.subscribeRequest(createNewsletterDto);
+  }
+
+  @Public()
+  @Post('subscribeNewsletter')
+  subscribeNewsletter(@Body() { verificationToken }: SubscribeNewsletterDto) {
+    return this.newsletterService.subscribeNewsletter(verificationToken);
+  }
+
+  @Public()
+  @Post('unsubscribe')
+  unSubscribe(@Body() { token }: UnSubscribeNewsletterDto) {
+    return this.newsletterService.unSubscribe(token);
+  }
+
 }
