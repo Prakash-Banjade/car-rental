@@ -54,7 +54,11 @@ export class ModelsService {
       .leftJoin("model.featuredImage", "featuredImage")
       .leftJoin("model.gallery", "gallery")
       .leftJoin("model.brand", "brand")
+      .leftJoin("model.reviews", "reviews")
+      .leftJoin("brand.logo", "logo")
       .leftJoin("model.carType", "carType")
+      .leftJoin("carType.image", "image")
+      .loadRelationCountAndMap("model.reviewsCount", "model.reviews")
       .andWhere(new Brackets(qb => {
         queryDto.search && qb.andWhere('LOWER(model.name) LIKE LOWER(:search)', { search: queryDto.search });
         queryDto.ratingFrom && queryDto.ratingFrom > 1 && qb.andWhere("model.rating >= :ratingFrom", { ratingFrom: queryDto.ratingFrom });

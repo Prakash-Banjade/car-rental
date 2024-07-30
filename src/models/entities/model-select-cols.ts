@@ -7,6 +7,16 @@ export const modelsColumnsConfig: FindOptionsSelect<Model> = {
     slug: true,
     color: true,
     createdAt: true,
+    rating: true,
+    dailyRentalRate: true,
+    seatCount: true,
+    doorCount: true,
+    transmission: true,
+    maxSpeed: true,
+    engineVolume: true,
+    fuelType: true,
+    acceleration: true,
+    power: true,
     featuredImage: {
         id: true,
         url: true
@@ -14,7 +24,25 @@ export const modelsColumnsConfig: FindOptionsSelect<Model> = {
     gallery: {
         id: true,
         url: true,
-    }
+    },
+    brand: {
+        id: true,
+        name: true,
+        slug: true,
+        logo: {
+            id: true,
+            url: true
+        }
+    },
+    carType: {
+        id: true,
+        name: true,
+        slug: true,
+        image: {
+            id: true,
+            url: true
+        }
+    },
 };
 
 export const modelColumnsConfig: FindOptionsSelect<Model> = {
