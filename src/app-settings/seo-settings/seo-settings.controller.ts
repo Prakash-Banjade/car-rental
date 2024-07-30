@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from "@nestjs/common";
-import { ApiConsumes, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { SeoSettingService } from "./seo-settings.service";
 import { SeoSettingsDto } from "../dto/seo-settings.dto";
 import { FileSystemStoredFile, FormDataRequest } from "nestjs-form-data";
@@ -15,9 +15,9 @@ export class SeoSettingController {
     ) { }
 
     @Post()
+    @ApiBearerAuth()
     @ApiConsumes('multipart/form-data')
     @ChekcAbilities({ subject: 'all', action: Action.CREATE })
-    @FormDataRequest({ storage: FileSystemStoredFile, limits: { fileSize: 1024 * 1024 * 2 } })
     async set(@Body() seoSettingsDto: SeoSettingsDto) {
         return await this.seoSettingService.set(seoSettingsDto);
     }
