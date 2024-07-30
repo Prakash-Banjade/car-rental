@@ -6,6 +6,7 @@ import { BrandsModule } from "src/brands/brands.module";
 import { CarTypesModule } from "src/car-types/car-types.module";
 import { ImagesModule } from "src/images/images.module";
 import { ModelsModule } from "src/models/models.module";
+import { NewsletterModule } from "src/app-settings/newsletter/newsletter.module";
 import { PaymentsModule } from "src/payments/payments.module";
 import { RentalsModule } from "src/rentals/rentals.module";
 import { ReviewsModule } from "src/reviews/reviews.module";
@@ -40,6 +41,7 @@ export function setupSwagger(app: INestApplication): void {
             RentalsModule,
             PaymentsModule,
             AppSettingsModule,
+            NewsletterModule,
         ],
     });
 

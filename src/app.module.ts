@@ -30,7 +30,7 @@ import { RentalsModule } from './rentals/rentals.module';
 import { StripeModule } from './stripe/stripe.module';
 import { PaymentsModule } from './payments/payments.module';
 import { AppSettingsModule } from './app-settings/app-settings.module';
-import { NewsletterModule } from './newsletter/newsletter.module';
+import { NewsletterModule } from './app-settings/newsletter/newsletter.module';
 import { BlogsModule } from './blogs/blogs.module';
 
 @Module({
