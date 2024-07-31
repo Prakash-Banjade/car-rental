@@ -9,12 +9,12 @@ export class ModelQueryDto extends QueryDto {
     @ApiPropertyOptional()
     @IsString()
     @IsOptional()
-    brandSlug?: string;
+    brand?: string;
 
     @ApiPropertyOptional()
     @IsString()
     @IsOptional()
-    carTypeSlug?: string;
+    carType?: string;
 
     @ApiPropertyOptional({ enum: EFuelType })
     @IsString()
