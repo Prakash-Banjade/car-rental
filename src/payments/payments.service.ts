@@ -33,7 +33,7 @@ export class PaymentsService {
         await this.paymentsRepository.savePayment(payment); // transaction
 
         return {
-          message: `Be ready with amount ${this.defaultProductPriceUnit} ${rental.totalAmount} on delivery. Thank you.`,
+          message: `Payment received as cash. Thank you.`,
         }
       }
 
