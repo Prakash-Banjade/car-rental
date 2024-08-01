@@ -178,12 +178,18 @@ export class RentalsService extends BaseRepository {
     existing.status = ERentalStatus.CANCELLED;
     existing.cancelledAt = new Date().toISOString();
 
-    const savedRentalawait = await this.getRepository<Rental>(Rental).save(existing);
+    const savedRental = await this.getRepository<Rental>(Rental).save(existing);
+
+    // CHANGE MODEL STATUS
+    for (const rentalItem of existing.rentalItems) {
+      rentalItem.model.status = EModelStatus.AVAILABLE;
+      await this.getRepository<Model>(Model).save(rentalItem.model);
+    }
 
     return {
       message: 'Rental cancelled successfully',
       rental: {
-        id: savedRentalawait.id
+        id: savedRental.id
       }
     }
   }

@@ -28,10 +28,10 @@ export class Rental extends BaseEntity {
     @Column({ type: 'enum', enum: ERentalStatus, default: ERentalStatus.BOOKED })
     status: ERentalStatus;
 
-    @AfterLoad()
-    setStatus() {
-        this.status = this.rentalItems?.every((item) => item.status === ERentalStatus.RETURNED) ? ERentalStatus.RETURNED : ERentalStatus.BOOKED
-    }
+    // @AfterLoad()
+    // setStatus() {
+    //     this.status = this.rentalItems?.every((item) => item.status === ERentalStatus.RETURNED) ? ERentalStatus.RETURNED : ERentalStatus.BOOKED
+    // }
 
     @OneToOne(() => Payment, (payment) => payment.rental)
     payment: Payment
