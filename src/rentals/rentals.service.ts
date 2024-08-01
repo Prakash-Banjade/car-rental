@@ -95,8 +95,6 @@ export class RentalsService extends BaseRepository {
     model.status = EModelStatus.BOOKED;
     await this.getRepository<Model>(Model).save(model);
 
-    console.log(1)
-
     return savedRentalItem;
   }
 

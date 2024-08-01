@@ -16,6 +16,7 @@ export const modelsColumnsConfig: FindOptionsSelect<Model> = {
     engineVolume: true,
     fuelType: true,
     acceleration: true,
+    status: true,
     power: true,
     featuredImage: {
         id: true,

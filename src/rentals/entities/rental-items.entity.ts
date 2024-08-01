@@ -3,6 +3,7 @@ import { AfterLoad, BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne } from
 import { Rental } from "./rental.entity";
 import { ERentalStatus } from "src/core/types/global.types";
 import { Model } from "src/models/entities/model.entity";
+import { BadRequestException } from "@nestjs/common";
 
 @Entity()
 export class RentalItem extends BaseEntity {
@@ -47,6 +48,10 @@ export class RentalItem extends BaseEntity {
     @BeforeInsert()
     @BeforeUpdate()
     calculateRentalDaysAndPrice() {
+        if (this.startDate > this.endDate) {
+            throw new BadRequestException('Start date cannot be greater than end date');
+        }
+        
         const days = Math.ceil((new Date(this.endDate).getTime() - new Date(this.startDate).getTime()) / (1000 * 3600 * 24));
         const totalAmount = days * this.model.dailyRentalRate;
 
