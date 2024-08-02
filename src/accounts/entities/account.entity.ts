@@ -38,9 +38,11 @@ export class Account extends BaseEntity {
 
     @OneToMany(() => Image, image => image.uploadedBy)
     images: Image[]
-    
+
     @BeforeInsert()
     hashPassword() {
+        if (this.provider === AuthProvider.GOOGLE) return;
+
         if (!this.password) throw new BadRequestException('Password required');
 
         this.password = bcrypt.hashSync(this.password, 10);
