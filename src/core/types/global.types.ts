@@ -9,6 +9,7 @@ export interface AuthUser {
     accountId: string;
     name: string;
     email: string;
+    image: string;
     role: Roles;
 }
 
@@ -52,7 +53,7 @@ export enum EModelStatus {
 
 export enum ERentalStatus {
     BOOKED = 'booked',
-    ACTIVE = 'active', 
+    ACTIVE = 'active',
     RETURNED = 'returned',
     CANCELLED = 'cancelled',
 }

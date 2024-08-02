@@ -63,9 +63,15 @@ export class AuthService {
         isVerified: true,
       },
       relations: {
-        user: true,
+        user: {
+          profileImage: true,
+        },
       }
     });
+
+    if (foundAccount.provider === AuthProvider.GOOGLE) {
+      throw new BadRequestException('Please continue with Google login.');
+    }
 
     if (!foundAccount)
       throw new UnauthorizedException(
@@ -85,6 +91,7 @@ export class AuthService {
       userId: foundAccount.user.id,
       name: foundAccount.firstName + ' ' + foundAccount.lastName,
       role: foundAccount.role,
+      image: foundAccount.user.profileImage?.url || '',
     };
 
     const access_token = await this.createAccessToken(payload);
@@ -104,9 +111,9 @@ export class AuthService {
     const refresh_token = req.cookies?.refresh_token;
     if (refresh_token) res.clearCookie('refresh_token', cookieOptions); // CLEAR COOKIE, BCZ A NEW ONE IS TO BE GENERATED
 
-    const { code } = googleOAuthDto;
+    const { id_token } = googleOAuthDto;
 
-    const { tokens } = await this.oAuth2Client.getToken(code); // exchange code for tokens
+    const tokens = { id_token } as Credentials
 
     const { email, family_name, given_name, picture, email_verified } = await this.getGoogleUser(tokens);
     if (!email_verified) throw new BadRequestException('Email not verified');
@@ -114,7 +121,7 @@ export class AuthService {
     // SEARCH FOR THE ACCOUNT IN DB
     const foundAccount = await this.accountsRepo.findOne({
       where: { email },
-      relations: { user: true }
+      relations: { user: { profileImage: true } }
     });
     let payload: AuthUser;
     let access_token: string;
@@ -127,7 +134,7 @@ export class AuthService {
         firstName: given_name,
         lastName: family_name ?? '',
         provider: AuthProvider.GOOGLE,
-        isVerified: email_verified,
+        isVerified: !!email_verified,
         password: null,
       })
 
@@ -148,6 +155,7 @@ export class AuthService {
         accountId: savedAccount.id,
         userId: savedUser.id,
         name: savedAccount.firstName,
+        image: savedUser.profileImage?.url || '',
         role: savedAccount.role,
       }
 
@@ -165,6 +173,7 @@ export class AuthService {
         accountId: foundAccount.id,
         name: foundAccount.firstName + ' ' + foundAccount.lastName,
         role: foundAccount.role,
+        image: foundAccount.user.profileImage?.url || '',
       }
 
       // GENERATE TOKENS WITH ABOVE PAYLOAD
@@ -298,7 +307,9 @@ export class AuthService {
     const foundAccount = await this.accountsRepo.findOne({
       where: { refresh_token: Like(`%${refresh_token}%`) },
       relations: {
-        user: true
+        user: {
+          profileImage: true,
+        }
       }
     });
 
@@ -337,6 +348,7 @@ export class AuthService {
       email: foundAccount.email,
       accountId: foundAccount.id,
       userId: foundAccount.user.id,
+      image: foundAccount.user.profileImage?.url || '',
       name: foundAccount.firstName + ' ' + foundAccount.lastName,
       role: foundAccount.role,
     };
@@ -377,6 +389,7 @@ export class AuthService {
   async logout(
     refresh_token: string,
   ) {
+    console.log('hi there')
     // Is refresh token in db?
     const foundAccount = await this.accountsRepo.findOne({
       where: { refresh_token: Like(`%${refresh_token}%`) },
