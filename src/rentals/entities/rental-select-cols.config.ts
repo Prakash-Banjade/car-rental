@@ -3,6 +3,7 @@ import { Rental } from "./rental.entity";
 
 export const rentalSelectColsConfig: FindOptionsSelect<Rental> = {
     id: true,
+    rentalId: true,
     createdAt: true,
     totalAmount: true,
     status: true,
