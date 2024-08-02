@@ -92,8 +92,8 @@ export class RentalsService extends BaseRepository {
     const savedRentalItem = await this.getRepository<RentalItem>(RentalItem).save(newRentalItems);
 
     // CHANGE MODEL STATUS
-    model.status = EModelStatus.BOOKED;
-    await this.getRepository<Model>(Model).save(model);
+    // model.status = EModelStatus.BOOKED;
+    // await this.getRepository<Model>(Model).save(model);
 
     return savedRentalItem;
   }
