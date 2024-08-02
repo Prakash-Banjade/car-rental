@@ -27,14 +27,14 @@ export class AuthController {
     refresshCookieOptions: CookieOptions = {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'none',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 day
     }
 
     accessCookieOptions: CookieOptions = {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'none',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 15 * 60 * 1000, // 15 min
     }
 
@@ -48,6 +48,7 @@ export class AuthController {
     @ApiConsumes('multipart/form-data')
     @FormDataRequest()
     async signIn(@Body() signInDto: SignInDto, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
+        console.log(signInDto)
         const { access_token, new_refresh_token, payload } = await this.authService.signIn(signInDto, req, res, this.refresshCookieOptions);
 
         res.cookie(this.ACCESS_TOKEN_KEY, access_token, this.refresshCookieOptions);
@@ -59,6 +60,7 @@ export class AuthController {
 
     @Public()
     @Post('googleOAuthLogin')
+    @HttpCode(HttpStatus.OK)
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(TransactionInterceptor)
     async googleOAuthLogin(@Body() googleOAuthDto: GoogleOAuthDto, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
