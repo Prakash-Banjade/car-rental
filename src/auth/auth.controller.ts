@@ -48,7 +48,6 @@ export class AuthController {
     @ApiConsumes('multipart/form-data')
     @FormDataRequest()
     async signIn(@Body() signInDto: SignInDto, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
-        console.log(signInDto)
         const { access_token, new_refresh_token, payload } = await this.authService.signIn(signInDto, req, res, this.refresshCookieOptions);
 
         res.cookie(this.ACCESS_TOKEN_KEY, access_token, this.refresshCookieOptions);

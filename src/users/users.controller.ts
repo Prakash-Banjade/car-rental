@@ -42,6 +42,11 @@ export class UsersController {
     return this.usersService.update(updateUserDto, currentUser);
   }
 
+  @Delete('profile-picture')
+  removeProfilePicture(@CurrentUser() currentUser: AuthUser) {
+    return this.usersService.removeProfilePicture(currentUser);
+  }
+
   @Delete(':id')
   @ChekcAbilities({ action: Action.DELETE, subject: 'all' })
   remove(@Param('id') id: string) {

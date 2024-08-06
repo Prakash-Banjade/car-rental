@@ -4,7 +4,7 @@ import { HasMimeType, IsFile, MaxFileSize, MemoryStoredFile } from "nestjs-form-
 
 export class CreateImageDto {
     @ApiProperty({ type: [String], format: 'binary', description: 'Image' })
-    @HasMimeType(['image/png', 'image/jpg', 'image/jpeg'], { each: true })
+    @HasMimeType(['image/png', 'image/jpg', 'image/jpeg', 'image/webp'], { each: true })
     @IsFile({ each: true })
     @MaxFileSize(5 * 1024 * 1024, { each: true })
     @IsNotEmpty({ each: true })

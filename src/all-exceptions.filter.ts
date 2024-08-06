@@ -50,6 +50,8 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
             errResponse.type = 'Others'
         }
 
+        console.log(errResponse.message, errResponse.path, errResponse.type)
+
         response.status(errResponse.statusCode).json(errResponse);
 
         super.catch(exception, host)

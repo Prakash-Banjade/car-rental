@@ -27,6 +27,8 @@ export class ImagesService {
   async upload(createImageDto: CreateImageDto, currentUser: AuthUser) {
     const account = await this.accountService.findOne(currentUser.accountId);
 
+    const images: { id: string, url: string }[] = [];
+
     for (const uploadImage of createImageDto.images) {
       const metaData = await getImageMetadata(uploadImage);
 
@@ -37,10 +39,16 @@ export class ImagesService {
       })
 
       await this.imagesRepository.save(newImage);
+
+      images.push({
+        id: newImage.id,
+        url: newImage.url
+      });
     }
 
     return {
       message: 'Image(s) Uploaded',
+      images,
       count: createImageDto.images.length,
     }
   }

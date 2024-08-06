@@ -106,6 +106,16 @@ export class UsersService {
     }
   }
 
+  async removeProfilePicture(currentUser: AuthUser) {
+    const user = await this.findOne(currentUser.userId);
+    user.profileImage = null;
+    await this.usersRepository.save(user);
+
+    return {
+      message: 'Profile picture removed'
+    }
+  }
+
   async remove(id: string) {
     const existingUser = await this.findOne(id);
     await this.usersRepository.softRemove(existingUser);

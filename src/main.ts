@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: ['http://client.com'],
+    origin: ['http://localhost:3000', 'http://localhost:3001'],
     credentials: true,
     optionsSuccessStatus: 200,
     preflightContinue: false, // enforce CORS policy consistently across the application's endpoints.
@@ -34,7 +34,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }))
 
   // swagger setup
-  setupSwagger(app);
+  !process.env.NODE_ENV && setupSwagger(app);
 
   // setup morgan
   // setupMorgan(app);

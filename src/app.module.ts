@@ -55,8 +55,8 @@ import { BlogsModule } from './blogs/blogs.module';
     }),
     StripeModule.forRootAsync(),
     ThrottlerModule.forRoot([{
-      ttl: 60000, // 10 requests per minute
-      limit: 10,
+      ttl: 1000, // 3 req per min
+      limit: 3,
     }]),
     // CacheModule.register({
     //   ttl: 5, // seconds
