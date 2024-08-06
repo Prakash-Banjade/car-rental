@@ -17,8 +17,8 @@ export class CreateCarTypeDto {
     @IsNotEmpty()
     imageId: string
 
-    @ApiPropertyOptional({ type: 'string', description: 'Slug of the car type' })
-    @IsString()
-    @IsOptional()
-    slug: string
+    // @ApiPropertyOptional({ type: 'string', description: 'Slug of the car type' })
+    // @IsString()
+    // @IsOptional()
+    // slug: string
 }

@@ -19,7 +19,6 @@ export class CarTypesService {
     const existingCarType = await this.carTypeRepository.findOne({
       where: [
         { name: createCarTypeDto.name },
-        { slug: createCarTypeDto.slug }
       ]
     });
     if (existingCarType) throw new ConflictException('Car type with that name or slug already exists');
@@ -29,7 +28,6 @@ export class CarTypesService {
     const carType = this.carTypeRepository.create({
       name: createCarTypeDto.name,
       image: image,
-      slug: createCarTypeDto.slug,
       description: createCarTypeDto.description,
     });
 
@@ -81,11 +79,10 @@ export class CarTypesService {
     const foundCarType = await this.findOne(slug);
 
     // check if name or slug is already taken
-    if (foundCarType.name !== updateCarTypeDto.name || foundCarType.slug !== updateCarTypeDto.slug) {
+    if (foundCarType.name !== updateCarTypeDto.name) {
       const existingCarType = await this.carTypeRepository.findOne({
         where: [
           { name: updateCarTypeDto.name },
-          { slug: updateCarTypeDto.slug }
         ]
       });
       if (existingCarType && existingCarType.id !== foundCarType.id) throw new ConflictException('Car type with that name or slug already exists');

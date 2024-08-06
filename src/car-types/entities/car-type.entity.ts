@@ -15,7 +15,7 @@ export class CarType extends BaseEntity {
     @BeforeInsert()
     @BeforeUpdate()
     generateSlug() {
-        if (!this.slug && this.name) this.slug = generateSlug(this.name, false);
+        this.slug = generateSlug(this.name, false);
     }
 
     @Column({ type: 'longtext' })
