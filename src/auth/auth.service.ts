@@ -8,7 +8,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Like, Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { SignInDto } from './dto/signIn.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -30,7 +30,6 @@ import { generateOtp } from 'src/core/utils/generateOPT';
 import { UsersRepository } from 'src/users/repository/users.repository';
 import { Credentials, OAuth2Client } from 'google-auth-library';
 import { GoogleOAuthDto } from './dto/googleOAuth.dto';
-import { Image } from 'src/images/entities/image.entity';
 import { ImagesService } from 'src/images/images.service';
 require('dotenv').config();
 
@@ -247,12 +246,11 @@ export class AuthService {
 
     await this.authRepository.saveVerificationEmailPending(emailVerificationPending);
 
-    const { previewUrl } = await this.mailService.sendEmailVerificationOtp(account, otp, verificationToken);
+    await this.mailService.sendEmailVerificationOtp(account, otp, verificationToken);
 
     return {
       message: 'OTP is valid for 30 hours',
       verificationToken,
-      previewUrl,
     }
   }
 
@@ -289,7 +287,7 @@ export class AuthService {
       account: savedAccount,
     });
 
-    const savedUser = await this.userRepository.createUser(newUser);
+    await this.userRepository.createUser(newUser);
 
     await this.authRepository.removeVerificationEmailPending(foundRequest.email); // remove from database
 
@@ -425,10 +423,9 @@ export class AuthService {
     });
     await this.passwordChangeRequestRepo.save(passwordChangeRequest);
 
-    const { previewUrl } = await this.mailService.sendResetPasswordLink(foundAccount, resetToken);
+    await this.mailService.sendResetPasswordLink(foundAccount, resetToken);
     return {
       message: 'Token is valid for 5 minutes',
-      previewUrl,
     };
   }
 

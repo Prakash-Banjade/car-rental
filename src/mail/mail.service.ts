@@ -42,7 +42,6 @@ export class MailService {
         });
 
         const previewUrl = nodemailer.getTestMessageUrl(result);
-        console.log('Preview URL:', previewUrl);
 
         return { result, previewUrl };
     }
@@ -58,7 +57,6 @@ export class MailService {
         });
 
         const previewUrl = nodemailer.getTestMessageUrl(result);
-        console.log('Preview URL:', previewUrl);
 
         return { result, previewUrl };
     }
@@ -74,7 +72,6 @@ export class MailService {
         });
 
         const previewUrl = nodemailer.getTestMessageUrl(result);
-        console.log('Preview URL:', previewUrl);
 
         return { result, previewUrl };
     }
@@ -89,7 +86,6 @@ export class MailService {
         });
 
         const previewUrl = nodemailer.getTestMessageUrl(result);
-        console.log('Preview URL:', previewUrl);
 
         return { result, previewUrl };
     }

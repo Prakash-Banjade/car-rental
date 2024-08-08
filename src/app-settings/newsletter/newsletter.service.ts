@@ -55,10 +55,9 @@ export class NewsletterService {
     await this.newsletterSubscribeRequestRepo.save(subscribeRequest);
 
     // SEND EMAIL
-    const { previewUrl } = await this.mailService.sendNewsletterVerification(createNewsletterDto.email, verificationToken);
+    await this.mailService.sendNewsletterVerification(createNewsletterDto.email, verificationToken);
     return {
       message: 'Please verify your email to subscribe to our newsletter',
-      previewUrl,
     };
   }
 
@@ -84,11 +83,10 @@ export class NewsletterService {
     await this.newsletterSubscribeRequestRepo.remove(subscribeRequest);
 
     // SEND MAIL TO NITOFY
-    const { previewUrl } = await this.mailService.subscribeConfirmationNotify(subscribeRequest.email, verificationToken);
+    await this.mailService.subscribeConfirmationNotify(subscribeRequest.email, verificationToken);
 
     return {
       message: 'Thanks for subscribing',
-      previewUrl
     }
   }
 
@@ -99,11 +97,10 @@ export class NewsletterService {
     await this.newsletterRepo.remove(newsletter);
 
     // SEND MAIL
-    const { previewUrl } = await this.mailService.unSubscribeNotify(newsletter.email);
+    await this.mailService.unSubscribeNotify(newsletter.email);
 
     return {
       message: 'Unsubscribed',
-      previewUrl,
     }
   }
 
