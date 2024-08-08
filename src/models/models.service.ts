@@ -47,8 +47,8 @@ export class ModelsService {
 
     queryBuilder
       .orderBy("model.createdAt", queryDto.order)
-      .skip(queryDto.skip)
-      .take(queryDto.take)
+      .skip(queryDto.skipPagination === 'true' ? undefined : queryDto.skip)
+      .take(queryDto.skipPagination === 'true' ? undefined : queryDto.take)
       .withDeleted()
       .where({ deletedAt })
       .leftJoin("model.featuredImage", "featuredImage")

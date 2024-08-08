@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { PageOptionsDto } from "./pageOptions.dto";
-import { IsEnum, IsOptional } from "class-validator";
+import { IsEnum, IsOptional, IsString } from "class-validator";
 
 export enum Deleted {
     ONLY = "only",
@@ -13,6 +13,11 @@ export class QueryDto extends PageOptionsDto {
     @IsEnum(Deleted, { message: "Invalid deleted option" })
     @IsOptional()
     deleted: Deleted = Deleted.NONE
+
+    @ApiPropertyOptional()
+    @IsString()
+    @IsOptional()
+    skipPagination?: string = 'false';
 
     @ApiPropertyOptional({ type: String, description: "Search query", default: "" })
     @IsOptional()
