@@ -31,8 +31,13 @@ export class NewsletterService {
   async subscribeRequest(createNewsletterDto: CreateNewsletterDto) {
     const existing = await this.newsletterSubscribeRequestRepo.findOne({ where: { email: createNewsletterDto.email } });
     if (existing) return {
-      message: 'Subscribed',
+      message: 'Please find our email verification link in your inbox.',
     };
+
+    const foundSubscription = await this.newsletterRepo.findOneBy({ email: createNewsletterDto.email });
+    if (foundSubscription) return {
+      message: 'Already subscribed',
+    }
 
     /**
     |--------------------------------------------------

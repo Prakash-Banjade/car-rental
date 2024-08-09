@@ -6,7 +6,7 @@ import { QueryDto } from 'src/core/dto/query.dto';
 import { NewsletterService } from './newsletter.service';
 
 @ApiTags('Newsletter')
-@Controller('newsletter')
+@Controller('newsletters')
 export class NewsletterController {
   constructor(private readonly newsletterService: NewsletterService) { }
 
