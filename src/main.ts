@@ -12,7 +12,13 @@ const PORT = process.env.PORT || 3000;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    origin: (origin: string, callback: Function) => {
+      if (origin === process.env.CLIENT_URL || origin === process.env.CMS_URL || (process.env.NODE_ENV === 'development' && !origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
     optionsSuccessStatus: 200,
     preflightContinue: false, // enforce CORS policy consistently across the application's endpoints.
