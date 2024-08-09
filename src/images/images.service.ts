@@ -58,8 +58,8 @@ export class ImagesService {
 
     queryBuilder
       .orderBy('image.createdAt', 'DESC')
-      .skip(queryDto.skip)
-      .take(queryDto.take)
+      .skip(queryDto.skipPagination === 'true' ? undefined : queryDto.skip)
+      .take(queryDto.skipPagination === 'true' ? undefined : queryDto.take)
       .leftJoin('image.uploadedBy', 'uploadedBy')
       .where(new Brackets(qb => {
         currentUser.role !== Roles.ADMIN && qb.where({ uploadedBy: { id: currentUser.accountId } })

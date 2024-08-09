@@ -9,6 +9,7 @@ import { CurrentUser } from 'src/core/decorators/user.decorator';
 import { QueryDto } from 'src/core/dto/query.dto';
 import { Response } from 'express';
 import { Public } from 'src/core/decorators/setPublicRoute.decorator';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
 @ApiBearerAuth()
 @ApiTags('Upload Images')
@@ -29,6 +30,7 @@ export class ImagesController {
 
   @Public()
   @Get('get-image/:slug')
+  @SkipThrottle()
   getImage(@Param("slug") slug: string, @Res() res: Response, @CurrentUser() currentUser?: AuthUser) {
     return this.imagesService.serveImage(slug, res);
   }
